@@ -17,6 +17,7 @@ jobs:
   build-and-deploy:
     name: Setup, Build, and Deploy
     runs-on: ubuntu-latest
+    environment: frontend-prod
     steps:
       - name: Checkout
         uses: actions/checkout@v3
