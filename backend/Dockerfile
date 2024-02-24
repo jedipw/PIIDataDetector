@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o pii
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o pii
 
-EXPOSE 8000
+USER nobody:nogroup
 
 CMD ["./pii"]
