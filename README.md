@@ -28,6 +28,5 @@ The Personally Identifiable Information (PII) Data Detector is an individual mac
 - <b>3rd Party APIs:</b> Firebase Authentication
 - <b>Container Management:</b> Docker
 - <b>Hosting:</b> Google Cloud Run
-- <b>DNS:</b> Cloudflare
 - <b>Version Control:</b> GitHub
 - <b>CI/CD:</b> GitHub Action
