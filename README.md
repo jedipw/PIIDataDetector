@@ -6,7 +6,7 @@
 
 The Personally Identifiable Information (PII) Data Detector is an individual machine learning project developed as part of the CSC532 Machine Learning course. The goal of this project is to detect personally identifiable information (PII) in student writing. In the web application, users can input text into the rich text editor. The application will then highlight words considered as PII and suggest removing those words. Additionally, users can save the text for later viewing.
 
-# Technology Stacks
+## Technology Stacks
 
 <b>Programming Languages:</b>
 - Python
@@ -30,3 +30,6 @@ The Personally Identifiable Information (PII) Data Detector is an individual mac
 - <b>Hosting:</b> Google Cloud Run
 - <b>Version Control:</b> GitHub
 - <b>CI/CD:</b> GitHub Action
+
+## More Information
+For more information, please refer to the "Wiki" section at https://github.com/jedipw/PIIDataDetector/wiki.
