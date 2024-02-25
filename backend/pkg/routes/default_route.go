@@ -6,5 +6,5 @@ import (
 )
 
 func DefaultRoute(a *fiber.App) {
-   a.Get("/", controllers.Home)
+   a.Get("/", controllers.Default)
 }
