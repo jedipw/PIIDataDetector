@@ -2,15 +2,16 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/jedipw/PIIDataDetector/pkg/routes"
 	"github.com/jedipw/PIIDataDetector/pkg/utils"
 )
 
 func main() {
 	app := fiber.New()
+   	
+	// Setup routes
+   	routes.DefaultRoute(app)
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Welcome to the PII Data Detector API.")
-	})
-
+	// Start server
 	utils.StartServer(app);
 }
