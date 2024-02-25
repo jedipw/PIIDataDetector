@@ -8,18 +8,18 @@ generator db {
 }
 
 model User {
-  user_id    String   @id
-  first_name String
-  last_name  String
+  userId    String   @id
+  firstName String
+  lastName  String
 
   texts      Text[]
 }
 
 model Text {
-  text_id          String     @id @default(uuid())
-  user_id          String
-  user             User       @relation(fields: [user_id], references: [user_id])
-  text_title       String?
-  text_content     String?
-  last_edited_on   DateTime   @default(now())
+  textId          String     @id @default(uuid())
+  userId          String
+  user             User       @relation(fields: [userId], references: [userId])
+  textTitle       String?
+  textContent     String?
+  lastEditedOn   DateTime   @default(now())
 }
