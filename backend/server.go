@@ -12,9 +12,9 @@ func main() {
 	// Connect to PostgreSQL
 	client := utils.PostgresConnect()
 	defer client.Disconnect()
-	
+
 	// Setup routes
-   	routes.DefaultRoute(app)
+	routes.DefaultRoute(app)
 	routes.UserRoutes(app, client)
 
 	// Start server
