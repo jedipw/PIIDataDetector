@@ -35,6 +35,11 @@ jobs:
       - name: Authorize Docker push
         run: gcloud auth configure-docker
 
+      - name: Create .env
+        run: |
+          echo "PORT=${{ secrets.PORT }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env
+
       - name: Build and tag the docker image
         run: |-
           docker build . --tag gcr.io/$PROJECT_ID/$REPO_NAME:$GITHUB_SHA
