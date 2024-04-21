@@ -16,6 +16,7 @@ func main() {
 	// Setup routes
 	routes.DefaultRoute(app)
 	routes.UserRoutes(app, client)
+	routes.TextRoutes(app, client)
 
 	// Start server
 	utils.StartServer(app)
