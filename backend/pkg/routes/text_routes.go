@@ -21,4 +21,8 @@ func TextRoutes(a *fiber.App, client *db.PrismaClient) {
 	route.Get("/getAllTexts/:userId", func(c *fiber.Ctx) error {
 		return controllers.GetAllTexts(c, client)
 	})
+
+	route.Get("/getText/:textId", func(c *fiber.Ctx) error {
+		return controllers.GetText(c, client)
+	})
 }

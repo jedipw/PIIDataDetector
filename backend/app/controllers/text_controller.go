@@ -9,7 +9,7 @@ import (
 	"github.com/jedipw/PIIDataDetector/types"
 )
 
-func CreateTextWithTitle (c *fiber.Ctx, client *db.PrismaClient) error {
+func CreateTextWithTitle(c *fiber.Ctx, client *db.PrismaClient) error {
 	var requestBody types.CreateTextWithTitleRequest
 	
 	if err := c.BodyParser(&requestBody); err != nil {
@@ -30,7 +30,7 @@ func CreateTextWithTitle (c *fiber.Ctx, client *db.PrismaClient) error {
 	})
 }
 
-func CreateTextWithContent (c *fiber.Ctx, client *db.PrismaClient) error {
+func CreateTextWithContent(c *fiber.Ctx, client *db.PrismaClient) error {
 	var requestBody types.CreateTextWithContentRequest
 	
 	if err := c.BodyParser(&requestBody); err != nil {
@@ -51,7 +51,7 @@ func CreateTextWithContent (c *fiber.Ctx, client *db.PrismaClient) error {
 	})
 }
 
-func GetAllTexts (c *fiber.Ctx, client *db.PrismaClient) error {
+func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient) error {
 	// Get the user ID from the URL parameter
 	userID := c.Params("userId")
 
@@ -64,5 +64,24 @@ func GetAllTexts (c *fiber.Ctx, client *db.PrismaClient) error {
 	// Return the texts as JSON response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"texts": texts,
+	})
+}
+
+func GetText(c *fiber.Ctx, client *db.PrismaClient) error {
+	// Get the user ID from the URL parameter
+	textID := c.Params("textId")
+
+	userID, textTitle, textContent, lastEditedOn, getErr := queries.GetText(c, client, textID)
+	if getErr != nil {
+		fmt.Println("Error getting text:", getErr)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to get text"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"textId": textID,
+		"userId": userID,
+		"textTitle": textTitle,
+		"textContent": textContent,
+		"lastEditedOn": lastEditedOn,
 	})
 }

@@ -19,7 +19,7 @@ model Text {
   textId       String   @id @default(uuid())
   userId       String
   user         User     @relation(fields: [userId], references: [userId])
-  textTitle    String?
-  textContent  String?
+  textTitle    String
+  textContent  String
   lastEditedOn DateTime @default(now())
 }

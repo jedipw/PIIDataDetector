@@ -1,10 +1,12 @@
 package queries
 
 import (
+	"time"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/jedipw/PIIDataDetector/pkg/utils"
 	"github.com/jedipw/PIIDataDetector/prisma/db"
 	"github.com/jedipw/PIIDataDetector/types"
-	"github.com/jedipw/PIIDataDetector/pkg/utils"
 )
 
 func CreateTextWithTitle(c *fiber.Ctx, client *db.PrismaClient, textRequest types.CreateTextWithTitleRequest) (*db.TextModel, error) {
@@ -49,4 +51,16 @@ func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient, userID string) ([]*db.Te
 	}
 
 	return utils.ConvertToPointer(texts), nil
+}
+
+func GetText(c *fiber.Ctx, client *db.PrismaClient, textID string) (string, string, string, time.Time, error) {
+	text, err := client.Text.FindUnique(
+		db.Text.TextID.Equals(textID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return "", "", "", time.Time{}, err
+	}
+
+	return text.UserID, text.TextTitle, text.TextContent, text.LastEditedOn, nil
 }
