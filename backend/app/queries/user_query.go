@@ -20,3 +20,16 @@ func CreateUser(c *fiber.Ctx, client *db.PrismaClient, userRequest types.CreateU
 
 	return createdUser, nil
 }
+
+func GetUserFullName(c *fiber.Ctx, client *db.PrismaClient, userID string) (string, string, error) {
+	// Use Prisma Client to get the user's full name
+	user, err := client.User.FindUnique(
+		db.User.UserID.Equals(userID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return "", "", err
+	}
+
+	return user.FirstName, user.LastName, nil
+}

@@ -13,4 +13,8 @@ func UserRoutes(a *fiber.App, client *db.PrismaClient) {
 	route.Post("/createUser", func(c *fiber.Ctx) error {
 		return controllers.CreateUser(c, client)
 	})
+
+	route.Get("/:userId", func(c *fiber.Ctx) error {
+		return controllers.GetUserFullName(c, client)
+	})
 }

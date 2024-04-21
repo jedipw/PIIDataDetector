@@ -30,3 +30,22 @@ func CreateUser(c *fiber.Ctx, client *db.PrismaClient) error {
 		"user":    createdUser,
 	})
 }
+
+func GetUserFullName(c *fiber.Ctx, client *db.PrismaClient) error {
+	// Get the user ID from the URL parameter
+	userID := c.Params("userId")
+	
+	// Get the user's full name
+	firstName, lastName, getErr := queries.GetUserFullName(c, client, userID)
+	if getErr != nil {
+		fmt.Println("Error getting user full name:", getErr)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to get user full name"})
+	}
+
+	// Return the user's full name as JSON response
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"userId":  userID,
+		"firstName": firstName,
+		"lastName":	lastName,
+	})
+}
