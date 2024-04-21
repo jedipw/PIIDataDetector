@@ -85,3 +85,23 @@ func GetText(c *fiber.Ctx, client *db.PrismaClient) error {
 		"lastEditedOn": lastEditedOn,
 	})
 }
+
+func EditTitle(c *fiber.Ctx, client *db.PrismaClient) error {
+	var requestBody types.EditTitleRequest
+	
+	if err := c.BodyParser(&requestBody); err != nil {
+		fmt.Println("Error parsing request body:", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	updatedText, updateErr := queries.EditTitle(c, client, requestBody)
+	if updateErr != nil {
+		fmt.Println("Error updating text title:", updateErr)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update text title"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully updated text title",
+		"text":    updatedText,
+	})
+}

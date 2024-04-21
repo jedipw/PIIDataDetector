@@ -64,3 +64,18 @@ func GetText(c *fiber.Ctx, client *db.PrismaClient, textID string) (string, stri
 
 	return text.UserID, text.TextTitle, text.TextContent, text.LastEditedOn, nil
 }
+
+func EditTitle(c *fiber.Ctx, client *db.PrismaClient, textRequest types.EditTitleRequest) (*db.TextModel, error) {
+	editedText, err := client.Text.FindUnique(
+		db.Text.TextID.Equals(textRequest.TextID),
+	).Update(
+		db.Text.TextTitle.Set(textRequest.TextTitle),
+		db.Text.LastEditedOn.Set(time.Now()),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return editedText, nil
+}
