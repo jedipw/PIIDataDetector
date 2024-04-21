@@ -33,3 +33,17 @@ func GetUserFullName(c *fiber.Ctx, client *db.PrismaClient, userID string) (stri
 
 	return user.FirstName, user.LastName, nil
 }
+
+func ChangeFullName(c *fiber.Ctx, client *db.PrismaClient, userRequest types.ChangeFullNameRequest) (*db.UserModel, error) {
+	// Use Prisma Client to update the user's full name
+	updatedUser, err := client.User.FindUnique(db.User.UserID.Equals(userRequest.UserID)).Update(
+		db.User.FirstName.Set(userRequest.FirstName),
+		db.User.LastName.Set(userRequest.LastName),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
+}

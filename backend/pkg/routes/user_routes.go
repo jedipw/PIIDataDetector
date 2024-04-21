@@ -17,4 +17,8 @@ func UserRoutes(a *fiber.App, client *db.PrismaClient) {
 	route.Get("/:userId", func(c *fiber.Ctx) error {
 		return controllers.GetUserFullName(c, client)
 	})
+
+	route.Put("/changeFullName", func(c *fiber.Ctx) error {
+		return controllers.ChangeFullName(c, client)
+	})
 }
