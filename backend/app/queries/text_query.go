@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jedipw/PIIDataDetector/prisma/db"
 	"github.com/jedipw/PIIDataDetector/types"
+	"github.com/jedipw/PIIDataDetector/pkg/utils"
 )
 
 func CreateTextWithTitle(c *fiber.Ctx, client *db.PrismaClient, textRequest types.CreateTextWithTitleRequest) (*db.TextModel, error) {
@@ -36,4 +37,16 @@ func CreateTextWithContent(c *fiber.Ctx, client *db.PrismaClient, textRequest ty
 	}
 
 	return createdText, nil
+}
+
+func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient, userID string) ([]*db.TextModel, error) {
+	texts, err := client.Text.FindMany(
+		db.Text.UserID.Equals(userID),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return utils.ConvertToPointer(texts), nil
 }

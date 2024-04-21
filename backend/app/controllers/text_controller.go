@@ -50,3 +50,19 @@ func CreateTextWithContent (c *fiber.Ctx, client *db.PrismaClient) error {
 		"text":    createdText,
 	})
 }
+
+func GetAllTexts (c *fiber.Ctx, client *db.PrismaClient) error {
+	// Get the user ID from the URL parameter
+	userID := c.Params("userId")
+
+	texts, getErr := queries.GetAllTexts(c, client, userID)
+	if getErr != nil {
+		fmt.Println("Error getting texts:", getErr)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to get texts"})
+	}
+
+	// Return the texts as JSON response
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"texts": texts,
+	})
+}
