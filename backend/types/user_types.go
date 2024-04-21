@@ -11,3 +11,7 @@ type ChangeFullNameRequest struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 }
+
+type PrismaUserWhereUniqueInput struct {
+  ID *int  // Adapt the field type based on your user ID type in Prisma
+}
