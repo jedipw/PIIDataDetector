@@ -29,4 +29,8 @@ func TextRoutes(a *fiber.App, client *db.PrismaClient) {
 	route.Put("/editTitle", func(c *fiber.Ctx) error {
 		return controllers.EditTitle(c, client)
 	})
+
+	route.Put("/editContent", func(c *fiber.Ctx) error {
+		return controllers.EditContent(c, client)
+	})
 }

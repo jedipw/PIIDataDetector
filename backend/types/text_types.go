@@ -14,3 +14,8 @@ type EditTitleRequest struct {
 	TextID string `json:"textId"`
 	TextTitle string `json:"textTitle"`
 }
+
+type EditContentRequest struct {
+	TextID string `json:"textId"`
+	TextContent string `json:"textContent"`
+}

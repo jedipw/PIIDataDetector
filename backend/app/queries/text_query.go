@@ -79,3 +79,18 @@ func EditTitle(c *fiber.Ctx, client *db.PrismaClient, textRequest types.EditTitl
 
 	return editedText, nil
 }
+
+func EditContent(c *fiber.Ctx, client *db.PrismaClient, textRequest types.EditContentRequest) (*db.TextModel, error) {
+	editedText, err := client.Text.FindUnique(
+		db.Text.TextID.Equals(textRequest.TextID),
+	).Update(
+		db.Text.TextContent.Set(textRequest.TextContent),
+		db.Text.LastEditedOn.Set(time.Now()),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return editedText, nil
+}
