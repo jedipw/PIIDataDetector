@@ -29,3 +29,24 @@ func CreateTextWithTitle (c *fiber.Ctx, client *db.PrismaClient) error {
 		"text":    createdText,
 	})
 }
+
+func CreateTextWithContent (c *fiber.Ctx, client *db.PrismaClient) error {
+	var requestBody types.CreateTextWithContentRequest
+	
+	if err := c.BodyParser(&requestBody); err != nil {
+		fmt.Println("Error parsing request body:", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	createdText, createErr := queries.CreateTextWithContent(c, client, requestBody)
+		if createErr != nil {
+		fmt.Println("Error creating text:", createErr)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create text"})
+	}
+
+	// Return the created text as JSON response
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully created text",
+		"text":    createdText,
+	})
+}

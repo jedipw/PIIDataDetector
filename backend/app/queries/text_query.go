@@ -21,3 +21,19 @@ func CreateTextWithTitle(c *fiber.Ctx, client *db.PrismaClient, textRequest type
 
 	return createdText, nil
 }
+
+func CreateTextWithContent(c *fiber.Ctx, client *db.PrismaClient, textRequest types.CreateTextWithContentRequest) (*db.TextModel, error) {
+	createdText, err := client.Text.CreateOne(
+		db.Text.User.Link(
+			db.User.UserID.Equals(textRequest.UserID),
+		),
+		db.Text.TextTitle.Set(""),
+		db.Text.TextContent.Set(textRequest.TextContent),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return createdText, nil
+}
