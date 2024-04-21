@@ -71,3 +71,21 @@ func ChangeFullName(c *fiber.Ctx, client *db.PrismaClient) error {
 		"user":    updatedUser,
 	})
 }
+
+func DeleteUser(c *fiber.Ctx, client *db.PrismaClient) error {
+	// Get the user ID from the URL parameter
+	userID := c.Params("userId")
+
+	// Delete the user
+	deletedUser ,deleteErr := queries.DeleteUser(c, client, userID)
+	if deleteErr != nil {
+		fmt.Println("Error deleting user:", deleteErr)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete user"})
+	}
+
+	// Return success message
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully deleted user",
+		"user":    deletedUser,
+	})
+}

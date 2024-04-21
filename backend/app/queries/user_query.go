@@ -47,3 +47,16 @@ func ChangeFullName(c *fiber.Ctx, client *db.PrismaClient, userRequest types.Cha
 
 	return updatedUser, nil
 }
+
+func DeleteUser(c *fiber.Ctx, client *db.PrismaClient, userID string) (*db.UserModel ,error) {
+	// Use Prisma Client to delete the user
+	deletedUser, err := client.User.FindUnique(
+		db.User.UserID.Equals(userID),
+	).Delete().Exec(c.Context())
+
+	if err != nil {
+		return nil ,err
+	}
+
+	return deletedUser, nil
+}
