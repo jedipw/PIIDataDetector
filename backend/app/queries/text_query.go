@@ -94,3 +94,15 @@ func EditContent(c *fiber.Ctx, client *db.PrismaClient, textRequest types.EditCo
 
 	return editedText, nil
 }
+
+func DeleteText(c *fiber.Ctx, client *db.PrismaClient, textID string) (*db.TextModel ,error) {
+	deletedText, err := client.Text.FindUnique(
+		db.Text.TextID.Equals(textID),
+	).Delete().Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return deletedText, nil
+}

@@ -33,4 +33,8 @@ func TextRoutes(a *fiber.App, client *db.PrismaClient) {
 	route.Put("/editContent", func(c *fiber.Ctx) error {
 		return controllers.EditContent(c, client)
 	})
+
+	route.Delete("/deleteText/:textId", func(c *fiber.Ctx) error {
+		return controllers.DeleteText(c, client)
+	})
 }
