@@ -95,7 +95,7 @@ func EditContent(c *fiber.Ctx, client *db.PrismaClient, textRequest types.EditCo
 	return editedText, nil
 }
 
-func DeleteText(c *fiber.Ctx, client *db.PrismaClient, textID string) (*db.TextModel ,error) {
+func DeleteText(c *fiber.Ctx, client *db.PrismaClient, textID string) (*db.TextModel, error) {
 	deletedText, err := client.Text.FindUnique(
 		db.Text.TextID.Equals(textID),
 	).Delete().Exec(c.Context())
@@ -105,4 +105,24 @@ func DeleteText(c *fiber.Ctx, client *db.PrismaClient, textID string) (*db.TextM
 	}
 
 	return deletedText, nil
+}
+
+func DeleteAllTexts(c *fiber.Ctx, client *db.PrismaClient, userID string) ([]*db.TextModel, error) {
+	deletedTexts, findErr := client.Text.FindMany(
+		db.Text.UserID.Equals(userID),
+	).Exec(c.Context())
+
+	if findErr != nil {
+		return nil, findErr
+	}
+
+	_, deleteErr := client.Text.FindMany(
+		db.Text.UserID.Equals(userID),
+	).Delete().Exec(c.Context())
+
+	if deleteErr != nil {
+		return nil, deleteErr
+	}
+
+	return utils.ConvertToPointer(deletedTexts), nil
 }
