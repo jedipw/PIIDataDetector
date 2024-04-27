@@ -38,7 +38,8 @@ jobs:
       - name: Create .env
         run: |
           echo "PORT=${{ secrets.PORT }}
-          DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          FRONTEND_URL=${{ secrets.FRONTEND_URL }}" > .env
 
       - name: Build and tag the docker image
         run: |-
