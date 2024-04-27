@@ -28,7 +28,6 @@ export default function Signup() {
     };
 
     const validateEmail = (email: string) => {
-        // Email validation logic here
         // Return an error message if the email is invalid, otherwise return an empty string
         if (!email) {
             return 'Email is required';
@@ -44,7 +43,6 @@ export default function Signup() {
     };
 
     const validateFirstName = (firstName: string) => {
-        // First name validation logic here
         // Return an error message if the first name is invalid, otherwise return an empty string
         if (!firstName) {
             return 'First name is required';
@@ -53,7 +51,6 @@ export default function Signup() {
     };
 
     const validateLastName = (lastName: string) => {
-        // Last name validation logic here
         // Return an error message if the last name is invalid, otherwise return an empty string
         if (!lastName) {
             return 'Last name is required';
@@ -62,7 +59,6 @@ export default function Signup() {
     };
 
     const validatePassword = (password: string) => {
-        // Password validation logic here
         // Return an error message if the password is invalid, otherwise return an empty string
         if (!password) {
             return 'Password is required';
@@ -77,7 +73,6 @@ export default function Signup() {
     };
 
     const validatePasswordAgain = (passwordAgain: string) => {
-        // Password again validation logic here
         // Return an error message if the password again is invalid, otherwise return an empty string
         if (!passwordAgain) {
             return 'Please confirm your password';
@@ -115,7 +110,7 @@ export default function Signup() {
 
     const signUp = () => {
         if (validateForm()) {
-            // Proceed with sign up logic
+            // Create a new user with the email and password
             createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
                 const user = userCredential.user;
                 const userId = user.uid;
@@ -234,13 +229,15 @@ export default function Signup() {
                                 <label htmlFor="password" className="block text-sm font-bold leading-6 text-gray-900">
                                     Password
                                 </label>
-                                <button
-                                    type="button"
-                                    onClick={toggleShowPassword}
-                                    className="text-sm text-gray-500 font-bold focus:outline-none"
-                                >
-                                    {showPassword ? 'Hide' : 'Show'}
-                                </button>
+                                {password &&
+                                    <button
+                                        type="button"
+                                        onClick={toggleShowPassword}
+                                        className="text-sm text-gray-500 font-bold focus:outline-none"
+                                    >
+                                        {showPassword ? 'Hide' : 'Show'}
+                                    </button>}
+
                             </div>
                             <div className="mt-2">
                                 <input
@@ -261,13 +258,14 @@ export default function Signup() {
                                 <label htmlFor="passwordAgain" className="block text-sm font-bold leading-6 text-gray-900">
                                     Confirm Password
                                 </label>
-                                <button
-                                    type="button"
-                                    onClick={toggleShowConfirmPassword}
-                                    className="text-sm text-gray-500 font-bold focus:outline-none"
-                                >
-                                    {showConfirmPassword ? 'Hide' : 'Show'}
-                                </button>
+                                {passwordAgain &&
+                                    <button
+                                        type="button"
+                                        onClick={toggleShowConfirmPassword}
+                                        className="text-sm text-gray-500 font-bold focus:outline-none"
+                                    >
+                                        {showConfirmPassword ? 'Hide' : 'Show'}
+                                    </button>}
                             </div>
                             <div className="mt-2">
                                 <input
