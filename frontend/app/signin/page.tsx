@@ -1,7 +1,7 @@
 'use client';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation';
 
 export default function Signin() {
@@ -66,6 +66,16 @@ export default function Signin() {
         return !emailError && !passwordError;
     };
 
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSubmitted(true);
+        if (validateForm()) {
+            signIn('credentials', { email, password, redirect: true, callbackUrl: '/' });
+        } else {
+            setIsSubmitted(false);
+        }
+    }
+
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -78,9 +88,7 @@ export default function Signin() {
                     </h3>
 
                     <form className="space-y-6 mt-10" action="#" method="POST" onSubmit={(e) => {
-                        e.preventDefault();
-                        setIsSubmitted(true);
-                        signIn('credentials', { email, password, redirect: true, callbackUrl: '/' });
+                        handleSubmit(e);
                     }}>
                         <div>
                             <label htmlFor="email" className="block text-sm font-bold leading-6 text-gray-900">
@@ -134,7 +142,7 @@ export default function Signin() {
                         <div className="flex justify-center">
                             <button
                                 type="submit"
-                                disabled={!email || !password || isSubmitted }
+                                disabled={!email || !password || isSubmitted}
                                 className="mt-5 disabled:opacity-40 flex w-48 justify-center rounded-md bg-[#FBBA21] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#E8A300] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E8A300]"
                             >
                                 Sign in
