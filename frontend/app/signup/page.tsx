@@ -1,5 +1,5 @@
 'use client';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useEffect, useState } from 'react';
 
@@ -64,11 +64,6 @@ export default function Signup() {
             return 'Password is required';
         }
 
-        // Regular expression to validate password
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-        if (!passwordRegex.test(password)) {
-            return 'Password must be at least 8 characters long and contain at least one letter and one number';
-        }
         return '';
     };
 
@@ -79,12 +74,6 @@ export default function Signup() {
         }
         if (passwordAgain !== password) {
             return 'Passwords do not match';
-        }
-
-        // Regular expression to validate password
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-        if (!passwordRegex.test(password)) {
-            return 'Password must be at least 8 characters long and contain at least one letter and one number';
         }
 
         return '';
@@ -131,6 +120,13 @@ export default function Signup() {
                     if (response.ok) {
                         // User created successfully
                         console.log('User created successfully');
+                        sendEmailVerification(user).then(() => {
+                            // Email sent
+                            console.log("Verification email sent.");
+                        }).catch((error) => {
+                            // Handle errors here
+                            console.error("Error sending verification email:", error);
+                        });
                     } else {
                         // Error creating user
                         console.error('Error creating user');

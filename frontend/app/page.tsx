@@ -9,6 +9,7 @@ export default function Home() {
         redirect('/signin');
     },
   });
+
   return (
     <div className="p-8">
       <div className='text-black'>{session?.data?.user?.email}</div>

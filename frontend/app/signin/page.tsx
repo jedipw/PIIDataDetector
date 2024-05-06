@@ -24,7 +24,7 @@ export default function Signin() {
             setErrors({
                 email: '',
                 password: '',
-                signInCredential: 'Invalid email or password. Please try again.'
+                signInCredential: 'Invalid email or password. Or the email is not verified. Please try again.'
             });
         }
     }, [searchParams]);
