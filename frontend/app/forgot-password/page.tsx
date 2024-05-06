@@ -2,6 +2,7 @@
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from 'react'
 import { auth } from '../firebase';
+import { useRouter } from 'next/navigation';
 
 export default function ForgotPassword() {
 
@@ -25,11 +26,20 @@ export default function ForgotPassword() {
         return true;
     };
 
+    const router = useRouter();
+
     const resetEmail = () => {
         if (validateEmail()) {
-            sendPasswordResetEmail(auth, email);
+            sendPasswordResetEmail(auth, email).then(() => {
+                // Ensure router is used after the email has been sent
+                router.push(`/forgot-password/success?email=${email}`);
+            }).catch((error) => {
+                // Handle any errors that occur during email sending
+                console.error("Failed to send password reset email", error);
+                setError("Failed to send password reset email");
+            });
         }
-    }
+    };
 
 
     return (
