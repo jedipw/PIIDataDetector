@@ -2,6 +2,7 @@
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Signup() {
     const [email, setEmail] = useState('');
@@ -11,6 +12,8 @@ export default function Signup() {
     const [passwordAgain, setPasswordAgain] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const router = useRouter();
     const [errors, setErrors] = useState({
         email: '',
         firstName: '',
@@ -98,6 +101,7 @@ export default function Signup() {
     };
 
     const signUp = () => {
+        setIsSubmitted(true);
         if (validateForm()) {
             // Create a new user with the email and password
             createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
@@ -123,16 +127,20 @@ export default function Signup() {
                         sendEmailVerification(user).then(() => {
                             // Email sent
                             console.log("Verification email sent.");
+                            // Ensure router is used after the email has been sent
+                            router.push(`/verify-email?email=${email}`);
                         }).catch((error) => {
                             // Handle errors here
                             console.error("Error sending verification email:", error);
                         });
                     } else {
+                        setIsSubmitted(false);
                         // Error creating user
                         console.error('Error creating user');
                     }
                 })
                     .catch(error => {
+                        setIsSubmitted(false);
                         // Handle any errors that occurred during the request
                         console.error('Error creating user:', error);
                     });
@@ -280,7 +288,7 @@ export default function Signup() {
                         <div className="flex justify-center">
                             <button
                                 type="submit"
-                                disabled={(!email || !password || !passwordAgain) || (password !== passwordAgain)}
+                                disabled={(!email || !password || !passwordAgain) || (password !== passwordAgain) || isSubmitted}
                                 className="mt-5 disabled:opacity-40 flex w-48 justify-center rounded-md bg-[#FBBA21] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#E8A300] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E8A300]"
                             >
                                 Sign Up
