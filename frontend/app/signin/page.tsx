@@ -10,6 +10,7 @@ export default function Signin() {
     const [password, setPassword] = useState('');
     const router = useRouter();
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({
         email: '',
         password: '',
@@ -28,6 +29,10 @@ export default function Signin() {
             });
         }
     }, [searchParams]);
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
 
     const validateEmail = (email: string) => {
         // Return an error message if the email is invalid, otherwise return an empty string
@@ -116,10 +121,16 @@ export default function Signin() {
                                 <div className="text-sm">
                                     <button
                                         type="button"
-                                        onClick={() => router.push('/forgot-password')}
+                                        onClick={() => {
+                                            if (password) {
+                                                setShowPassword(!showPassword);
+                                            } else {
+                                                router.push('/forgot-password')
+                                            }
+                                        }}
                                         className="text-sm text-gray-500 font-bold focus:outline-none"
                                     >
-                                        Forget password?
+                                        {password ? showPassword ? 'Hide' : 'Show' : 'Forget password?'}
                                     </button>
                                 </div>
                             </div>
@@ -127,7 +138,7 @@ export default function Signin() {
                                 <input
                                     id="password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     autoComplete="current-password"
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
