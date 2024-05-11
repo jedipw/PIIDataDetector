@@ -1,11 +1,9 @@
 from flask import Flask
 from flask_restful import Api, Resource, reqparse
 
-import json
 import os
 import re
 import bisect
-from pathlib import Path
 
 import torch
 import numpy as np
@@ -94,7 +92,6 @@ class CustomTokenizer:
         )
 
         return {**tokenized, "token_map": token_map, }
-    
 
 
 def tokenize_with_spacy(text, tokenizer=en_tokenizer):
@@ -129,7 +126,8 @@ class PII(Resource):
         })
 
         tokenizer = DebertaV2TokenizerFast.from_pretrained(MODEL_PATH)
-        ds = ds.map(CustomTokenizer(tokenizer=tokenizer, max_length=INFERENCE_MAX_LENGTH), num_proc=os.cpu_count())
+        ds = ds.map(CustomTokenizer(tokenizer=tokenizer,
+                    max_length=INFERENCE_MAX_LENGTH), num_proc=os.cpu_count())
 
         model = DebertaV2ForTokenClassification.from_pretrained(MODEL_PATH)
 
@@ -142,7 +140,8 @@ class PII(Resource):
 
         predictions = trainer.predict(ds).predictions
 
-        pred_softmax = torch.softmax(torch.from_numpy(predictions), dim=2).numpy()
+        pred_softmax = torch.softmax(
+            torch.from_numpy(predictions), dim=2).numpy()
         id2label = model.config.id2label
         o_index = model.config.label2id["O"]
         preds = predictions.argmax(-1)
@@ -151,7 +150,6 @@ class PII(Resource):
         preds_without_o = preds_without_o.argmax(-1)
         o_preds = pred_softmax[:, :, o_index]
         preds_final = np.where(o_preds < CONF_THRESH, preds_without_o, preds)
-
 
         processed = []
         pairs = set()
@@ -194,7 +192,6 @@ class PII(Resource):
                 )
                 pairs.add(pair)
 
-
         url_whitelist = [
             "wikipedia.org",
             "coursera.org",
@@ -213,7 +210,7 @@ class PII(Resource):
                     continue
                 input_idxs = spacy_to_hf(_data, token_idx)
                 probs = pred_softmax[row_idx, input_idxs,
-                                    model.config.label2id["B-URL_PERSONAL"]]
+                                     model.config.label2id["B-URL_PERSONAL"]]
                 if probs.mean() > URL_THRESH:
                     print("The above is PII")
                     processed.append(
@@ -227,7 +224,6 @@ class PII(Resource):
                     pairs.add((_data["document"], token_idx))
                 else:
                     print("The above is not PII")
-
 
         email_regex = re.compile(r'[\w.+-]+@[\w-]+\.[\w.-]+')
         phone_num_regex = re.compile(
