@@ -106,7 +106,59 @@ export default function Home() {
 
   return (
     <div className="h-screen relative">
-      <div className="shadow-2xl" style={{ width: '275px', height: '100%' }}>
+      <div className="absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto" style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)' }}>
+        <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+          <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+            <Image width="20" height="20" src="/name.svg" alt="Names" className="mr-2" style={{ filter: 'invert(100%)' }} />
+            <p className="text-black font-bold text-md">Names</p>
+          </div>
+          <p className="pt-3 text-gray-400 italic">No names detected</p>
+        </div>  
+        <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+          <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+            <Image width="20" height="20" src="/email.svg" alt="Emails" className="mr-2" style={{ filter: 'invert(100%)' }} />
+            <p className="text-black font-bold text-md">Emails</p>
+          </div>
+          <p className="pt-3 text-gray-400 italic">No emails detected</p>
+        </div>
+        <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+          <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+            <Image width="20" height="20" src="/id_number.svg" alt="ID Numbers" className="mr-2" style={{ filter: 'invert(100%)' }} />
+            <p className="text-black font-bold text-md">ID Numbers</p>
+          </div>
+          <p className="pt-3 text-gray-400 italic">No ID numbers detected</p>
+        </div>  
+        <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+          <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+            <Image width="20" height="20" src="/phone_number.svg" alt="Phone Numbers" className="mr-2" style={{ filter: 'invert(100%)' }} />
+            <p className="text-black font-bold text-md">Phone Numbers</p>
+          </div>
+          <p className="pt-3 text-gray-400 italic">No phone numbers detected</p>
+        </div>  
+        <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+          <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+            <Image width="20" height="20" src="/address.svg" alt="Street Addresses" className="mr-2" style={{ filter: 'invert(100%)' }} />
+            <p className="text-black font-bold text-md">Street Addresses</p>
+          </div>
+          <p className="pt-3 text-gray-400 italic">No street addresses detected</p>
+        </div>  
+        <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+          <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+            <Image width="20" height="20" src="/url.svg" alt="URLs" className="mr-2" style={{ filter: 'invert(100%)' }} />
+            <p className="text-black font-bold text-md">URLs</p>
+          </div>
+          <p className="pt-3 text-gray-400 italic">No URLs detected</p>
+        </div>  
+        <div className="mt-5 p-4 rounded-xl mb-5" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+          <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+            <Image width="20" height="20" src="/username.svg" alt="Usernames" className="mr-2" style={{ filter: 'invert(100%)' }} />
+            <p className="text-black font-bold text-md">Usernames</p>
+          </div>
+          <p className="pt-3 text-gray-400 italic">No usernames detected</p>
+        </div>    
+      </div>
+      
+      <div className="h-full bg-white" style={{ width: '275px', boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.1)' }}>
         {showLogout && (
           <div className="absolute ml-4 flex bg-white bottom-20 p-2 rounded-xl shadow-xl items-center" style={{ width: '240px', height: '60px' }}>
             <button
@@ -137,7 +189,6 @@ export default function Home() {
 
         </div>
       </div>
-
     </div>
   );
 }
