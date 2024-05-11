@@ -5,12 +5,15 @@ import { useEffect, useState } from "react";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import Image from "next/image";
+import TextSelectionButton from "@/components/TextSelectionButton";
 
 export default function Home() {
   const [fullName, setFullName] = useState('');
   const [userId, setUserId] = useState('');
   const [showLogout, setShowLogout] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
+  const [isProfileHovered, setIsProfileHovered] = useState(false);
+  const [isNewButtonHovered, setIsNewButtonHovered] = useState(false);
 
   const session = useSession({
     required: true,
@@ -181,9 +184,36 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="h-full bg-white" style={{ width: '275px', boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.1)' }}>
+      <div className="h-full bg-white p-3 overflow-auto" style={{ width: '275px', height: 'calc(100vh - 80px)', boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.1)' }}>
+        <button
+          className="flex pl-2 pr-2 pt-3 pb-3 mb-5 w-full rounded-xl items-center justify-between"
+          onMouseEnter={() => setIsNewButtonHovered(true)}
+          onMouseLeave={() => setIsNewButtonHovered(false)}
+          style=
+          {{
+            backgroundColor: isNewButtonHovered ? '#EBEBEB' : ''
+          }}
+        >
+          <div className="flex items-center">
+            <div className='w-8 h-8 rounded-full flex items-center justify-center mr-3 bg-[#FAD06D]'>
+              <Image width="25" height="25" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} /> 
+            </div>
+            <p className="text-black font-bold">New Document</p>
+          </div>
+
+          <Image width="20" height="20" src="/new.svg" alt="Log out" style={{ filter: 'invert(100%)' }} />
+        </button>
+        <TextSelectionButton />
+        <TextSelectionButton />
+        <TextSelectionButton />
+        <TextSelectionButton />
+        <TextSelectionButton />
+        <TextSelectionButton />
+        <TextSelectionButton />
+        <TextSelectionButton />
+        <TextSelectionButton />
         {showLogout && (
-          <div className="absolute ml-4 flex bg-white bottom-20 p-2 rounded-xl shadow-xl items-center" style={{ width: '240px', height: '60px' }}>
+          <div className="absolute flex bg-white bottom-20 p-3 rounded-xl shadow-xl items-center z-10" style={{ width: '240px', height: '60px' }}>
             <button
               className="text-black font-bold items-center flex rounded-xl p-3"
               onClick={signOutAndSetShowLogOut}
@@ -191,22 +221,42 @@ export default function Home() {
               onMouseLeave={() => setIsLogoutHovered(false)}
               style={{
                 width: '230px',
-                height: '50px',
-                backgroundColor: isLogoutHovered ? '#F4EEE0' : '',
+                height: '40px',
+                backgroundColor: isLogoutHovered ? '#EBEBEB' : '',
               }}
             >
               <Image width="20" height="20" src="/logout.svg" alt="Log out" className="mr-2" style={{ filter: 'invert(100%)' }} /> Log out
             </button>
           </div>
         )}
-        <div className="absolute flex items-center bottom-0 left-0 p-3">
+        <div className="absolute flex items-center bottom-0 left-0 p-3 bg-white" style={{ width: '275px', boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.1)' }}>
           {/* Button wrapping the circle and name */}
-
-          <button className="flex items-center p-2 rounded-xl" onClick={(e) => handleUserClick(e)} style={{ width: '250px', height: '60px', backgroundColor: showLogout ? '#FAD06D' : '' }}>
-            <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3' style={{ backgroundColor: hashStringToColor(fullName) }}>
-              <span className='text-black font-semibold' style={{ color: isColorDark(hashStringToColor(fullName)) ? 'white' : 'black' }}>{getInitials(fullName)}</span>
+          <button
+            className="flex items-center p-2 rounded-xl"
+            onClick={(e) => handleUserClick(e)}
+            onMouseEnter={() => setIsProfileHovered(true)}
+            onMouseLeave={() => setIsProfileHovered(false)}
+            style=
+            {{
+              width: '250px',
+              height: '60px',
+              backgroundColor: showLogout || isProfileHovered ? '#EBEBEB' : ''
+            }}
+          >
+            <div
+              className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3'
+              style={{ backgroundColor: hashStringToColor(fullName) }}
+            >
+              <span
+                className='text-black font-semibold'
+                style={{ color: isColorDark(hashStringToColor(fullName)) ? 'white' : 'black' }}
+              >
+                {getInitials(fullName)}
+              </span>
             </div>
-            <div className='text-black font-bold text-sm'>{fullName}</div>
+            <div className='text-black font-bold text-md'>{
+              fullName}
+            </div>
           </button>
           {/* Logout option */}
 
