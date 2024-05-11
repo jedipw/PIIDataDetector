@@ -11,7 +11,7 @@ export default function Home() {
   const [userId, setUserId] = useState('');
   const [showLogout, setShowLogout] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
-  
+
   const session = useSession({
     required: true,
     onUnauthenticated() {
@@ -106,6 +106,29 @@ export default function Home() {
 
   return (
     <div className="h-screen relative">
+      <div className="absolute h-full overflow-auto left-80" style={{ width: `calc(100vw - 680px)` }}>
+        <input
+          className="w-full h-10 pr-10 mt-5 text-black text-xl font-bold"
+          style=
+          {{
+            lineHeight: 'normal',
+            outline: 'none',
+            height: '50px'
+          }}
+          placeholder="Untitled Document"
+        />
+        <textarea
+          className="w-full pr-20 mt-10 pb-10 text-black text-xl resize-none font-extralight"
+          style=
+          {{
+            lineHeight: 'normal',
+            outline: 'none',
+            height: 'calc(100vh - 150px)'
+          }}
+          placeholder="Type or paste your text here..."
+        />
+      </div>
+
       <div className="absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto" style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)' }}>
         <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
           <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
@@ -113,7 +136,7 @@ export default function Home() {
             <p className="text-black font-bold text-md">Names</p>
           </div>
           <p className="pt-3 text-gray-400 italic">No names detected</p>
-        </div>  
+        </div>
         <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
           <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
             <Image width="20" height="20" src="/email.svg" alt="Emails" className="mr-2" style={{ filter: 'invert(100%)' }} />
@@ -127,37 +150,37 @@ export default function Home() {
             <p className="text-black font-bold text-md">ID Numbers</p>
           </div>
           <p className="pt-3 text-gray-400 italic">No ID numbers detected</p>
-        </div>  
+        </div>
         <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
           <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
             <Image width="20" height="20" src="/phone_number.svg" alt="Phone Numbers" className="mr-2" style={{ filter: 'invert(100%)' }} />
             <p className="text-black font-bold text-md">Phone Numbers</p>
           </div>
           <p className="pt-3 text-gray-400 italic">No phone numbers detected</p>
-        </div>  
+        </div>
         <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
           <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
             <Image width="20" height="20" src="/address.svg" alt="Street Addresses" className="mr-2" style={{ filter: 'invert(100%)' }} />
             <p className="text-black font-bold text-md">Street Addresses</p>
           </div>
           <p className="pt-3 text-gray-400 italic">No street addresses detected</p>
-        </div>  
+        </div>
         <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
           <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
             <Image width="20" height="20" src="/url.svg" alt="URLs" className="mr-2" style={{ filter: 'invert(100%)' }} />
             <p className="text-black font-bold text-md">URLs</p>
           </div>
           <p className="pt-3 text-gray-400 italic">No URLs detected</p>
-        </div>  
+        </div>
         <div className="mt-5 p-4 rounded-xl mb-5" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
           <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
             <Image width="20" height="20" src="/username.svg" alt="Usernames" className="mr-2" style={{ filter: 'invert(100%)' }} />
             <p className="text-black font-bold text-md">Usernames</p>
           </div>
           <p className="pt-3 text-gray-400 italic">No usernames detected</p>
-        </div>    
+        </div>
       </div>
-      
+
       <div className="h-full bg-white" style={{ width: '275px', boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.1)' }}>
         {showLogout && (
           <div className="absolute ml-4 flex bg-white bottom-20 p-2 rounded-xl shadow-xl items-center" style={{ width: '240px', height: '60px' }}>
@@ -172,7 +195,7 @@ export default function Home() {
                 backgroundColor: isLogoutHovered ? '#F4EEE0' : '',
               }}
             >
-              <Image width="20" height="20" src="/logout.svg" alt="Log out" className="mr-2" style={{filter: 'invert(100%)'}}/> Log out
+              <Image width="20" height="20" src="/logout.svg" alt="Log out" className="mr-2" style={{ filter: 'invert(100%)' }} /> Log out
             </button>
           </div>
         )}
