@@ -14,6 +14,7 @@ export default function Home() {
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
   const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [isNewButtonHovered, setIsNewButtonHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const session = useSession({
     required: true,
@@ -68,13 +69,14 @@ export default function Home() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}`, { method: 'GET' });
         const data = await response.json();
         setFullName(`${data['firstName']} ${data['lastName']}`);
+        console.log('Full name:', fullName)
       } catch (error) {
         console.error('Failed to fetch user full name:', error);
       }
     };
 
-    fetchFullName();
-  }, [userId]);
+    fetchFullName().then(() => setIsLoading(false));
+  }, [userId, fullName]);
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -196,7 +198,7 @@ export default function Home() {
         >
           <div className="flex items-center">
             <div className='w-8 h-8 rounded-full flex items-center justify-center mr-3 bg-[#FAD06D]'>
-              <Image width="25" height="25" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} /> 
+              <Image width="25" height="25" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} />
             </div>
             <p className="text-black font-bold">New Document</p>
           </div>
@@ -243,20 +245,25 @@ export default function Home() {
               backgroundColor: showLogout || isProfileHovered ? '#EBEBEB' : ''
             }}
           >
-            <div
-              className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3'
-              style={{ backgroundColor: hashStringToColor(fullName) }}
-            >
-              <span
-                className='text-black font-semibold'
-                style={{ color: isColorDark(hashStringToColor(fullName)) ? 'white' : 'black' }}
-              >
-                {getInitials(fullName)}
-              </span>
-            </div>
-            <div className='text-black font-bold text-md'>{
-              fullName}
-            </div>
+            {isLoading ? <div className="text-black font-bold text-md">Loading...</div> :
+              <div className="flex items-center">
+                <div
+                  className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3'
+                  style={{ backgroundColor: hashStringToColor(fullName) }}
+                >
+                  <span
+                    className='text-black font-semibold'
+                    style={{ color: isColorDark(hashStringToColor(fullName)) ? 'white' : 'black' }}
+                  >
+                    {getInitials(fullName)}
+                  </span>
+                </div>
+                <div className='text-black font-bold text-md'>{
+                  fullName}
+                </div>
+              </div>
+            }
+
           </button>
           {/* Logout option */}
 
