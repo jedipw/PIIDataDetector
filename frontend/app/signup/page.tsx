@@ -110,7 +110,8 @@ export default function Signup() {
                 const userData = {
                     userId,
                     firstName,
-                    lastName
+                    lastName,
+                    email
                 };
                 // Call the backend route to create the user in the database
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/createUser`, {

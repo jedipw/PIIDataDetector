@@ -12,6 +12,7 @@ func CreateUser(c *fiber.Ctx, client *db.PrismaClient, userRequest types.CreateU
 		db.User.UserID.Set(userRequest.UserID),
 		db.User.FirstName.Set(userRequest.FirstName),
 		db.User.LastName.Set(userRequest.LastName),
+		db.User.Email.Set(userRequest.Email),
 	).Exec(c.Context())
 
 	if err != nil {
@@ -21,17 +22,17 @@ func CreateUser(c *fiber.Ctx, client *db.PrismaClient, userRequest types.CreateU
 	return createdUser, nil
 }
 
-func GetUserFullName(c *fiber.Ctx, client *db.PrismaClient, userID string) (string, string, error) {
+func GetUserDetail(c *fiber.Ctx, client *db.PrismaClient, email string) (string, string, string, error) {
 	// Use Prisma Client to get the user's full name
-	user, err := client.User.FindUnique(
-		db.User.UserID.Equals(userID),
+	user, err := client.User.FindFirst(
+		db.User.Email.Equals(email) ,
 	).Exec(c.Context())
 
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
-	return user.FirstName, user.LastName, nil
+	return user.UserID, user.FirstName, user.LastName, nil
 }
 
 func ChangeFullName(c *fiber.Ctx, client *db.PrismaClient, userRequest types.ChangeFullNameRequest) (*db.UserModel, error) {

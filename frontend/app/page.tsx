@@ -41,7 +41,6 @@ export default function Home() {
 
     // Add the event listener to the window object
     window.addEventListener('click', handleWindowClick);
-
     // Step 4: Return a cleanup function to remove the event listener
     return () => {
       window.removeEventListener('click', handleWindowClick);
@@ -49,24 +48,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Step 2: Set up Firebase Auth observer
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid); // Step 3: Update userId state
-      } else {
-        setUserId('');
-      }
-    });
-
-    return () => unsubscribe(); // Clean up the observer
-  }, []);
-
-  useEffect(() => {
-    if (!userId) return;
+    if (!session.data?.user?.email) return;
 
     const fetchFullName = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}`, { method: 'GET' });
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${session.data?.user?.email}`, { method: 'GET' });
         const data = await response.json();
         setFullName(`${data['firstName']} ${data['lastName']}`);
         console.log('Full name:', fullName)
@@ -76,7 +62,7 @@ export default function Home() {
     };
 
     fetchFullName().then(() => setIsLoading(false));
-  }, [userId, fullName]);
+  }, [session.data?.user?.email, fullName]);
 
   const getInitials = (name: string) => {
     const names = name.split(' ');

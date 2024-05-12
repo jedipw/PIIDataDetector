@@ -11,6 +11,7 @@ model User {
   userId    String @id
   firstName String
   lastName  String
+  email     String
 
   texts Text[]
 }
