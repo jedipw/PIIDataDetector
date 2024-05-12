@@ -28,6 +28,7 @@ The Personally Identifiable Information (PII) Data Detector is an individual mac
 
 ## First Time Setup
 ### PII Data Detector
+1. Download `model.safetensors` from https://drive.google.com/file/d/19gw8qc6TlHQb5Ag2Ke_e2vEPfVGCRrW3/view?usp=sharing and place it in `/pii_data_detector/model`.
 1. In the terminal, navigate to the `/pii_data_detector` directory.
 2. Run `pip install -r requirements.txt` in the terminal.
 3. Run `python main.py` in the terminal to start the server.
