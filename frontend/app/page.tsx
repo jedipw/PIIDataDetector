@@ -2,14 +2,11 @@
 import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { auth } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import Image from "next/image";
 import TextSelectionButton from "@/components/TextSelectionButton";
 
 export default function Home() {
   const [fullName, setFullName] = useState('');
-  const [userId, setUserId] = useState('');
   const [showLogout, setShowLogout] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
   const [isProfileHovered, setIsProfileHovered] = useState(false);
