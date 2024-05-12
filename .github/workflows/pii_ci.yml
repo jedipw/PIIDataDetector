@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: |
         pip install -r requirements.txt
-        python app.py
+        python -m py_compile app.py
