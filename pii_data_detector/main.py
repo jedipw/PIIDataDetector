@@ -256,7 +256,7 @@ class PII(Resource):
         df = pd.DataFrame(processed + emails + phone_nums)
         df["row_id"] = list(range(len(df)))
 
-        return df.to_json()
+        return { "data": data[0], "prediction": df.to_dict()}
 
 
 api.add_resource(PII, "/pii")
