@@ -13,3 +13,6 @@ Werkzeug==1.0.1
 transformers==4.36.2
 spacy==3.7.4
 accelerate==0.30.0
+pandas==2.2.2
+six==1.15.0
+datasets==2.12.0
