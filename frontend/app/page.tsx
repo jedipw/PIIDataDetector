@@ -381,7 +381,7 @@ export default function Home() {
                       </div>
                     ))}
                   </ul>
-                  : <p className="pt-3 text-gray-400 italic">No Personal URLs detected</p>}
+                  : <p className="pt-3 text-gray-400 italic">No personal URLs detected</p>}
               </div>
               <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
                 <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
@@ -402,7 +402,7 @@ export default function Home() {
                       </div>
                     ))}
                   </ul>
-                  : <p className="pt-3 text-gray-400 italic">No Personal URLs detected</p>}
+                  : <p className="pt-3 text-gray-400 italic">No usernames detected</p>}
               </div></>}
         </div>
         <div className="h-full bg-white p-3 overflow-auto" style={{ width: '275px', height: 'calc(100vh - 80px)', boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.1)' }}>
