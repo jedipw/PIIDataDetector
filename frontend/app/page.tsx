@@ -7,6 +7,7 @@ import TextSelectionButton from "@/components/TextSelectionButton";
 import PIIResponse from "./types/PIIResponse";
 import AllTextsResponse from "./types/AllTextsResponse";
 import TextResponse from "./types/TextResponse";
+import DeleteButton from "@/components/DeleteButton";
 import { set } from "firebase/database";
 export default function Home() {
   const [fullName, setFullName] = useState('');
@@ -31,6 +32,8 @@ export default function Home() {
   const [usernames, setUsernames] = useState({});
   const [textId, setTextId] = useState('');
   const [allTexts, setAllTexts] = useState<AllTextsResponse>({ texts: [] });
+  const [isBeingDeleted, setIsBeingDeleted] = useState(false);
+  const [isAPIBeingCalled, setIsAPIBeingCalled] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   let lastSelectedToken = '';
@@ -43,9 +46,54 @@ export default function Home() {
     },
   });
 
+  const fetchAllTextAfterDelete = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/text/getAllTexts/${userId}`, { method: 'GET' });
+      const data = await response.json();
+      setAllTexts(data);
+      setIsBeingDeleted(false);
+      console.log('All texts:', data);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
+  }
+
+  const handleDelete = async (deletedTextId: string) => {
+    try {
+      setIsBeingDeleted(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/text/deleteText/${deletedTextId}`, { method: 'DELETE' });
+      const data = await response.json();
+      console.log('Text deleted:', data);
+      if (deletedTextId === textId) {
+        setTextTitle('');
+        setTextContent('');
+        setTextId('');
+        setPrevTextTitle('');
+        setPrevTextContent('');
+      }
+      fetchAllTextAfterDelete();
+    } catch (error) {
+      console.error('Failed to delete text:', error);
+    }
+  }
+
   useEffect(() => {
+    const fetchAllTexts = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/text/getAllTexts/${userId}`, { method: 'GET' });
+        const data = await response.json();
+        setAllTexts(data);
+        setIsBeingDeleted(false);
+        setIsAPIBeingCalled(false);
+        console.log('All texts:', data);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    }
+
     const createTextWithTitle = async () => {
       try {
+        setIsAPIBeingCalled(true);
         const requestBody = { userId, textTitle };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/createTextWithTitle`;
         const response = await fetch(url, {
@@ -59,6 +107,7 @@ export default function Home() {
         console.log('Text saved:', data);
         setTextId(data.text.textId);
         setPrevTextTitle(textTitle);
+        fetchAllTexts()
       } catch (error) {
         console.error('Failed to save text:', error);
       }
@@ -66,6 +115,7 @@ export default function Home() {
 
     const editTextTitle = async () => {
       try {
+        setIsAPIBeingCalled(true);
         const requestBody = { textId, textTitle };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editTitle`;
         const response = await fetch(url, {
@@ -78,6 +128,7 @@ export default function Home() {
         const data = await response.json();
         console.log('Text updated:', data);
         setPrevTextTitle(textTitle);
+        fetchAllTexts()
       } catch (error) {
         console.error('Failed to update text:', error);
       }
@@ -85,6 +136,7 @@ export default function Home() {
 
     const createTextWithContent = async () => {
       try {
+        setIsAPIBeingCalled(true);
         const requestBody = { userId, textContent };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/createTextWithContent`;
         const response = await fetch(url, {
@@ -98,6 +150,7 @@ export default function Home() {
         console.log('Text saved:', data);
         setTextId(data.text.textId);
         setPrevTextContent(textContent);
+        fetchAllTexts()
       } catch (error) {
         console.error('Failed to save text:', error);
       }
@@ -105,6 +158,7 @@ export default function Home() {
 
     const editTextContent = async () => {
       try {
+        setIsAPIBeingCalled(true);
         const requestBody = { textId, textContent };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editContent`;
         const response = await fetch(url, {
@@ -117,6 +171,7 @@ export default function Home() {
         const data = await response.json();
         console.log('Text updated:', data);
         setPrevTextContent(textContent);
+        fetchAllTexts()
       } catch (error) {
         console.error('Failed to update text:', error);
       }
@@ -124,6 +179,7 @@ export default function Home() {
 
     const createTextWithTitleAndContent = async () => {
       try {
+        setIsAPIBeingCalled(true);
         const requestBody = { userId, textContent, textTitle };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/createTextWithTitleAndContent`;
         const response = await fetch(url, {
@@ -137,6 +193,7 @@ export default function Home() {
         setTextId(data.text.textId);
         setPrevTextContent(textContent);
         setPrevTextTitle(textTitle);
+        fetchAllTexts()
         console.log('Text saved:', data)
       } catch (error) {
         console.error('Failed to save text:', error);
@@ -145,6 +202,7 @@ export default function Home() {
 
     const editTextTitleAndContent = async () => {
       try {
+        setIsAPIBeingCalled(true);
         const requestBody = { textId, textTitle, textContent };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editTitleAndContent`;
         const response = await fetch(url, {
@@ -158,6 +216,7 @@ export default function Home() {
         console.log('Text updated:', data);
         setPrevTextTitle(textTitle);
         setPrevTextContent(textContent);
+        fetchAllTexts()
       } catch (error) {
         console.error('Failed to update text:', error);
       }
@@ -179,7 +238,7 @@ export default function Home() {
             createTextWithContent();
           }
         } else {
-          if(prevTextContent !== textContent && prevTextTitle !== textTitle) {
+          if (prevTextContent !== textContent && prevTextTitle !== textTitle) {
             editTextTitleAndContent();
           }
           else if (prevTextContent !== textContent) {
@@ -435,7 +494,7 @@ export default function Home() {
   };
 
   return (
-     isAllTextsLoading || isFullNameLoading ?
+    isAllTextsLoading || isFullNameLoading ?
       <div className="h-screen flex flex-col justify-center items-center">
         <Image className="mb-4" width="100" height="100" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} />
         <div className="text-black font-bold text-3xl">Loading...</div>
@@ -638,6 +697,7 @@ export default function Home() {
             className="flex pl-2 pr-2 pt-3 pb-3 mb-5 w-full rounded-xl items-center justify-between"
             onMouseEnter={() => setIsNewButtonHovered(true)}
             onMouseLeave={() => setIsNewButtonHovered(false)}
+            disabled={isAPIBeingCalled || isBeingDeleted}
             onClick={() => createNewDocument()}
             style=
             {{
@@ -653,17 +713,26 @@ export default function Home() {
             <Image width="20" height="20" src="/new.svg" alt="Log out" style={{ filter: 'invert(100%)' }} />
           </button>
           {[...allTexts.texts].reverse().map((text: TextResponse) => (
-            <TextSelectionButton
-              key={text.textId}
-              focused={text.textId === textId}
-              textTitle={text.textTitle}
-              textContent={text.textContent}
-              onClick={() => {
-                setTextTitle(text.textTitle);
-                setTextContent(text.textContent);
-                setTextId(text.textId);
-              }}
-            />
+            <div className="flex" key={text.textId}>
+              <TextSelectionButton
+                disabled={isAPIBeingCalled || isBeingDeleted}
+                focused={text.textId === textId}
+                textTitle={text.textTitle}
+                textContent={text.textContent}
+                onClick={() => {
+                  setTextTitle(text.textTitle);
+                  setTextContent(text.textContent);
+                  setTextId(text.textId);
+                }}
+              />
+              <DeleteButton
+                onClick={() => {
+                  handleDelete(text.textId);
+                }}
+                disabled={isBeingDeleted}
+              />
+            </div>
+
           ))}
           {showLogout && (
             <div className="absolute flex bg-white bottom-20 p-3 rounded-xl shadow-xl items-center z-10" style={{ width: '240px', height: '60px' }}>
