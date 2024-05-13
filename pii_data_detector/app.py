@@ -20,7 +20,7 @@ from transformers.data.data_collator import DataCollatorForTokenClassification
 app = Flask(__name__)
 api = Api(app)
 
-CORS(app, origin=["http://localhost:3000"])
+CORS(app)
 
 nlp = English()
 en_tokenizer = English().tokenizer
