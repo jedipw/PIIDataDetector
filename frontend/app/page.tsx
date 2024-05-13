@@ -1,18 +1,20 @@
 'use client';
 import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import TextSelectionButton from "@/components/TextSelectionButton";
 import PIIResponse from "./types/PIIResponse";
 
 export default function Home() {
   const [fullName, setFullName] = useState('');
+  const [userId, setUserId] = useState('');
   const [showLogout, setShowLogout] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
   const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [isNewButtonHovered, setIsNewButtonHovered] = useState(false);
   const [isFullNameLoading, setIsFullNameLoading] = useState(true);
+  const [textTitle, setTextTitle] = useState('');
   const [textAreaValue, setTextAreaValue] = useState('');
   const [isFindingPII, setIsFindingPII] = useState(false);
   const [fullNames, setFullNames] = useState({});
@@ -22,6 +24,9 @@ export default function Home() {
   const [streetAddresses, setStreetAddresses] = useState({});
   const [personalUrls, setPersonalUrls] = useState({});
   const [usernames, setUsernames] = useState({});
+  const [textId, setTextId] = useState('');
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   let lastSelectedToken = '';
   let lastSelectedPosition = 0;
 
@@ -154,6 +159,46 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const createTextWithTitle = async () => {
+      try {
+        const requestBody = { userId, textTitle };
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/createTextWithTitle`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        const data = await response.json();
+        console.log('Text saved:', data);
+        setTextId(data.text.textId);
+      } catch (error) {
+        console.error('Failed to save text:', error);
+      }
+    }
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      if (textTitle.trim()) {
+        if (!textId) {
+          createTextWithTitle();
+        }
+      }
+    }, 1000);
+
+    // Cleanup function to clear the timeout when the component unmounts or before setting a new timeout
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [textTitle, userId, textId]);
+
+  useEffect(() => {
     // Step 2: Define a function to handle the click and set showLogout to false
     const handleWindowClick = () => {
       setShowLogout(false);
@@ -181,8 +226,19 @@ export default function Home() {
       }
     };
 
-    fetchFullName().then(() => setIsFullNameLoading(false));
-  }, [session.data?.user?.email, fullName]);
+    const fetchUserId = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${session.data?.user?.email}`, { method: 'GET' });
+        const data = await response.json();
+        setUserId(data['userId']);
+        console.log('User ID:', userId)
+      } catch (error) {
+        console.error('Failed to fetch user ID:', error);
+      }
+    }
+
+    fetchFullName().then(() => fetchUserId()).then(() => setIsFullNameLoading(false));
+  }, [session.data?.user?.email, fullName, userId]);
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -260,6 +316,10 @@ export default function Home() {
               outline: 'none',
               height: '50px'
             }}
+            onChange={
+              (event) => setTextTitle(event.target.value)
+            }
+            value={textTitle}
             placeholder="Untitled Document"
           />
           <textarea
