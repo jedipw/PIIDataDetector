@@ -41,6 +41,22 @@ func CreateTextWithContent(c *fiber.Ctx, client *db.PrismaClient, textRequest ty
 	return createdText, nil
 }
 
+func CreateTextWithTitleAndContent(c *fiber.Ctx, client *db.PrismaClient, textRequest types.CreateTextWithTitleAndContentRequest) (*db.TextModel, error) {
+	createdText, err := client.Text.CreateOne(
+		db.Text.User.Link(
+			db.User.UserID.Equals(textRequest.UserID),
+		),
+		db.Text.TextTitle.Set(textRequest.TextTitle),
+		db.Text.TextContent.Set(textRequest.TextContent),
+	).Exec(c.Context())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return createdText, nil
+}
+
 func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient, userID string) ([]*db.TextModel, error) {
 	texts, err := client.Text.FindMany(
 		db.Text.UserID.Equals(userID),

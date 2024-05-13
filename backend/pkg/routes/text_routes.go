@@ -18,6 +18,10 @@ func TextRoutes(a *fiber.App, client *db.PrismaClient) {
 		return controllers.CreateTextWithContent(c, client)
 	})
 
+	route.Post("/createTextWithTitleAndContent", func(c *fiber.Ctx) error {
+		return controllers.CreateTextWithTitleAndContent(c, client)
+	})
+
 	route.Get("/getAllTexts/:userId", func(c *fiber.Ctx) error {
 		return controllers.GetAllTexts(c, client)
 	})

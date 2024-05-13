@@ -51,6 +51,27 @@ func CreateTextWithContent(c *fiber.Ctx, client *db.PrismaClient) error {
 	})
 }
 
+func CreateTextWithTitleAndContent(c *fiber.Ctx, client *db.PrismaClient) error {
+	var requestBody types.CreateTextWithTitleAndContentRequest
+	
+	if err := c.BodyParser(&requestBody); err != nil {
+		fmt.Println("Error parsing request body:", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	createdText, createErr := queries.CreateTextWithTitleAndContent(c, client, requestBody)
+		if createErr != nil {
+		fmt.Println("Error creating text:", createErr)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create text"})
+	}
+
+	// Return the created text as JSON response
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully created text",
+		"text":    createdText,
+	})
+}
+
 func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient) error {
 	// Get the user ID from the URL parameter
 	userID := c.Params("userId")

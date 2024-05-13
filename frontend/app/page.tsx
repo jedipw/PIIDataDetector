@@ -15,7 +15,9 @@ export default function Home() {
   const [isNewButtonHovered, setIsNewButtonHovered] = useState(false);
   const [isFullNameLoading, setIsFullNameLoading] = useState(true);
   const [textTitle, setTextTitle] = useState('');
-  const [textAreaValue, setTextAreaValue] = useState('');
+  const [textContent, setTextContent] = useState('');
+  const [prevTextTitle, setPrevTextTitle] = useState('');
+  const [prevTextContent, setPrevTextContent] = useState('');
   const [isFindingPII, setIsFindingPII] = useState(false);
   const [fullNames, setFullNames] = useState({});
   const [emails, setEmails] = useState({});
@@ -25,7 +27,8 @@ export default function Home() {
   const [personalUrls, setPersonalUrls] = useState({});
   const [usernames, setUsernames] = useState({});
   const [textId, setTextId] = useState('');
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTitleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingContentTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   let lastSelectedToken = '';
   let lastSelectedPosition = 0;
@@ -45,7 +48,7 @@ export default function Home() {
   const getPII = async () => {
     try {
       setIsFindingPII(true);
-      const requestBody = { 'text': textAreaValue };
+      const requestBody = { 'text': textContent };
       const url = `${process.env.NEXT_PUBLIC_PII_URL}`;
       const response = await fetch(url, {
         method: 'POST',
@@ -173,30 +176,123 @@ export default function Home() {
         const data = await response.json();
         console.log('Text saved:', data);
         setTextId(data.text.textId);
+        setPrevTextTitle(textTitle);
       } catch (error) {
         console.error('Failed to save text:', error);
       }
     }
 
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
+    const editTextTitle = async () => {
+      try {
+        const requestBody = { textId, textTitle };
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editTitle`;
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        const data = await response.json();
+        console.log('Text updated:', data);
+        setPrevTextTitle(textTitle);
+      } catch (error) {
+        console.error('Failed to update text:', error);
+      }
     }
 
-    typingTimeoutRef.current = setTimeout(() => {
-      if (textTitle.trim()) {
+    const createTextWithContent = async () => {
+      try {
+        const requestBody = { userId, textContent };
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/createTextWithContent`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        const data = await response.json();
+        console.log('Text saved:', data);
+        setTextId(data.text.textId);
+        setPrevTextContent(textContent);
+      } catch (error) {
+        console.error('Failed to save text:', error);
+      }
+    }
+
+    const editTextContent = async () => {
+      try {
+        const requestBody = { textId, textContent };
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editContent`;
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        const data = await response.json();
+        console.log('Text updated:', data);
+        setPrevTextContent(textContent);
+      } catch (error) {
+        console.error('Failed to update text:', error);
+      }
+    }
+
+    const createTextWithTitleAndContent = async () => {
+      try {
+        const requestBody = { userId, textContent, textTitle };
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/createTextWithTitleAndContent`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        const data = await response.json();
+        setTextId(data.text.textId);
+        setPrevTextContent(textContent);
+        setPrevTextTitle(textTitle);
+        console.log('Text saved:', data)
+      } catch (error) {
+        console.error('Failed to save text:', error);
+      }
+    }
+
+    if (typingTitleTimeoutRef.current) {
+      clearTimeout(typingTitleTimeoutRef.current);
+    }
+
+    typingTitleTimeoutRef.current = setTimeout(() => {
+      if (textContent.trim() || textTitle.trim()) {
         if (!textId) {
-          createTextWithTitle();
+          if (textContent && textTitle) {
+            createTextWithTitleAndContent();
+          }
+          else if (textTitle) {
+            createTextWithTitle();
+          } else if (textContent) {
+            createTextWithContent();
+          }
+        } else {
+          if (prevTextContent !== textContent) {
+            editTextContent();
+          } else if (prevTextTitle !== textTitle) {
+            editTextTitle();
+          }
         }
       }
     }, 1000);
 
     // Cleanup function to clear the timeout when the component unmounts or before setting a new timeout
     return () => {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
+      if (typingTitleTimeoutRef.current) {
+        clearTimeout(typingTitleTimeoutRef.current);
       }
     };
-  }, [textTitle, userId, textId]);
+  }, [textTitle, userId, textId, prevTextContent, prevTextTitle, textContent]);
 
   useEffect(() => {
     // Step 2: Define a function to handle the click and set showLogout to false
@@ -325,9 +421,9 @@ export default function Home() {
           <textarea
             id="textArea"
             className="w-full pr-20 mt-10 pb-10 text-black text-xl resize-none font-extralight"
-            value={textAreaValue}
+            value={textContent}
             onChange={(event) => {
-              setTextAreaValue(event.target.value);
+              setTextContent(event.target.value);
             }}
             style={{
               lineHeight: 'normal',
@@ -337,7 +433,7 @@ export default function Home() {
             placeholder="Type or paste your text here..."
           />
           <button
-            disabled={!textAreaValue || isFindingPII}
+            disabled={!textContent || isFindingPII}
             className="absolute w-36 h-12 flex items-center bottom-0 right-0 mb-5 mr-5 bg-[#FAD06D] hover:bg-[#E8A300] text-black font-bold py-2 px-4 rounded-xl shadow-md disabled:opacity-40"
             onClick={() => getPII()}
           >

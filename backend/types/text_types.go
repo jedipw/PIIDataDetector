@@ -10,6 +10,12 @@ type CreateTextWithContentRequest struct {
 	TextContent string `json:"textContent"`
 }
 
+type CreateTextWithTitleAndContentRequest struct {
+	UserID string `json:"userId"`
+	TextTitle string `json:"textTitle"`
+	TextContent string `json:"textContent"`
+}
+
 type EditTitleRequest struct {
 	TextID string `json:"textId"`
 	TextTitle string `json:"textTitle"`
