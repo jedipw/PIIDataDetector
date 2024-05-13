@@ -467,10 +467,15 @@ export default function Home() {
 
   return (
     isAllTextsLoading || isFullNameLoading ?
-      <div className="h-screen flex flex-col justify-center items-center">
+      <div className=" h-screen flex flex-col justify-center items-center ">
         <Image className="mb-4" width="100" height="100" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} />
         <div className="text-black font-bold text-3xl">Loading...</div>
-      </div> : <div className="h-screen relative">
+      </div> : <>
+        <div className=" h-screen flex flex-col justify-center items-center lg:hidden">
+          <div className="text-black font-bold text-3xl text-center">Sorry, your device is too small to use this app.</div>
+          <button className="text-black bg-[#FAD06D] p-3 m-3 font-bold rounded shadow-md" onClick={() => signOut()} >Sign out</button>
+        </div>
+        <div className="sm:hidden lg:block h-screen relative">
         <div className="absolute h-full overflow-auto left-80" style={{ width: `calc(100vw - 680px)` }}>
           <input
             className="w-full h-10 pr-10 mt-5 text-black text-xl font-bold"
@@ -516,7 +521,8 @@ export default function Home() {
               <Image className="mr-2 mb-2" width="100" height="100" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
               <div className=" text-black text-xl font-bold w-full text-center">Finding PII...</div>
             </div>
-            : <><div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+            : <>
+            <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
               <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
                 <Image width="20" height="20" src="/name.svg" alt="Names" className="mr-2" style={{ filter: 'invert(100%)' }} />
                 <p className="text-black font-bold text-md">Names</p>
@@ -757,6 +763,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      </>
   );
 }
 
