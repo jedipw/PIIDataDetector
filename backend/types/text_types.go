@@ -25,3 +25,9 @@ type EditContentRequest struct {
 	TextID string `json:"textId"`
 	TextContent string `json:"textContent"`
 }
+
+type EditTitleAndContentRequest struct {
+	TextID string `json:"textId"`
+	TextTitle string `json:"textTitle"`
+	TextContent string `json:"textContent"`
+}

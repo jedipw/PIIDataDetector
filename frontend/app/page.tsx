@@ -143,6 +143,26 @@ export default function Home() {
       }
     }
 
+    const editTextTitleAndContent = async () => {
+      try {
+        const requestBody = { textId, textTitle, textContent };
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editTitleAndContent`;
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        const data = await response.json();
+        console.log('Text updated:', data);
+        setPrevTextTitle(textTitle);
+        setPrevTextContent(textContent);
+      } catch (error) {
+        console.error('Failed to update text:', error);
+      }
+    }
+
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
@@ -159,7 +179,10 @@ export default function Home() {
             createTextWithContent();
           }
         } else {
-          if (prevTextContent !== textContent) {
+          if(prevTextContent !== textContent && prevTextTitle !== textTitle) {
+            editTextTitleAndContent();
+          }
+          else if (prevTextContent !== textContent) {
             editTextContent();
           } else if (prevTextTitle !== textTitle) {
             editTextTitle();
