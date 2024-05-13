@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import TextSelectionButton from "@/components/TextSelectionButton";
+import PIIResponse from "./types/PIIResponse";
 
 export default function Home() {
   const [fullName, setFullName] = useState('');
@@ -14,6 +15,13 @@ export default function Home() {
   const [isFullNameLoading, setIsFullNameLoading] = useState(true);
   const [textAreaValue, setTextAreaValue] = useState('');
   const [isFindingPII, setIsFindingPII] = useState(false);
+  const [fullNames, setFullNames] = useState({});
+  const [emails, setEmails] = useState({});
+  const [idNums, setIdNums] = useState({});
+  const [phoneNums, setPhoneNums] = useState({});
+  const [streetAddresses, setStreetAddresses] = useState({});
+  const [personalUrls, setPersonalUrls] = useState({});
+  const [usernames, setUsernames] = useState({});
 
   const session = useSession({
     required: true,
@@ -40,12 +48,103 @@ export default function Home() {
         body: JSON.stringify(requestBody)
       });
       const data = await response.json();
+      console.log(typeof (data));
       setIsFindingPII(false);
+      processPII(data);
+
       console.log('PII:', data);
     } catch (error) {
       console.error('Failed to fetch PII:', error);
     }
   }
+
+  const processPII = (data: PIIResponse) => {
+    let tempFullNames: {
+      [key: string]: number;
+    } = {};
+    let tempEmails: {
+      [key: string]: number;
+    } = {};
+    let tempIdNums: {
+      [key: string]: number;
+    } = {};
+    let tempPhoneNums: {
+      [key: string]: number;
+    } = {};
+    let tempStreetAddresses: {
+      [key: string]: number;
+    } = {};
+    let tempPersonalUrls: {
+      [key: string]: number;
+    } = {};
+    let tempUsernames: {
+      [key: string]: number;
+    } = {};
+    let currentPII = '';
+    let currentType = '';
+
+    const tokens = data.data.tokens;
+    const labels = data.prediction.label;
+    const trailingWhitespace = data.data.trailing_whitespace;
+
+    if (!tokens || !labels || !trailingWhitespace) return;
+
+    Object.keys(labels).forEach((key: string) => {
+      const tokenIndex = data.prediction.token[key];
+      const label = labels[key];
+      const token = tokens[tokenIndex];
+      const space = trailingWhitespace[tokenIndex] ? ' ' : '';
+
+      if (label.startsWith('B-')) {
+        if (currentPII !== '') {
+          let trimmedPII = currentPII.trim();
+          switch (currentType) {
+            case 'B-NAME_STUDENT': tempFullNames[trimmedPII] = (tempFullNames[trimmedPII] || 0) + 1; break;
+            case 'B-EMAIL': tempEmails[trimmedPII] = (tempEmails[trimmedPII] || 0) + 1; break;
+            case 'B-ID_NUM': tempIdNums[trimmedPII] = (tempIdNums[trimmedPII] || 0) + 1; break;
+            case 'B-PHONE_NUM': tempPhoneNums[trimmedPII] = (tempPhoneNums[trimmedPII] || 0) + 1; break;
+            case 'B-STREET_ADDRESS': tempStreetAddresses[trimmedPII] = (tempStreetAddresses[trimmedPII] || 0) + 1; break;
+            case 'B-URL_PERSONAL': tempPersonalUrls[trimmedPII] = (tempPersonalUrls[trimmedPII] || 0) + 1; break;
+            case 'B-USERNAME': tempUsernames[trimmedPII] = (tempUsernames[trimmedPII] || 0) + 1; break;
+          }
+        }
+        currentPII = token + space;
+        currentType = label;
+      } else if (label.startsWith('I-')) {
+        currentPII += token + space;
+      }
+    });
+
+    if (currentPII !== '') {
+      let trimmedPII = currentPII.trim();
+      switch (currentType) {
+        case 'B-NAME_STUDENT': tempFullNames[trimmedPII] = (tempFullNames[trimmedPII] || 0) + 1; break;
+        case 'B-EMAIL': tempEmails[trimmedPII] = (tempEmails[trimmedPII] || 0) + 1; break;
+        case 'B-ID_NUM': tempIdNums[trimmedPII] = (tempIdNums[trimmedPII] || 0) + 1; break;
+        case 'B-PHONE_NUM': tempPhoneNums[trimmedPII] = (tempPhoneNums[trimmedPII] || 0) + 1; break;
+        case 'B-STREET_ADDRESS': tempStreetAddresses[trimmedPII] = (tempStreetAddresses[trimmedPII] || 0) + 1; break;
+        case 'B-URL_PERSONAL': tempPersonalUrls[trimmedPII] = (tempPersonalUrls[trimmedPII] || 0) + 1; break;
+        case 'B-USERNAME': tempUsernames[trimmedPII] = (tempUsernames[trimmedPII] || 0) + 1; break;
+      }
+    }
+
+    // Update state with the extracted information
+    setFullNames(tempFullNames);
+    setEmails(tempEmails);
+    setIdNums(tempIdNums);
+    setPhoneNums(tempPhoneNums);
+    setStreetAddresses(tempStreetAddresses);
+    setPersonalUrls(tempPersonalUrls);
+    setUsernames(tempUsernames);
+
+    console.log('Full names:', tempFullNames);
+    console.log('Emails:', tempEmails);
+    console.log('ID numbers:', tempIdNums);
+    console.log('Phone numbers:', tempPhoneNums);
+    console.log('Street addresses:', tempStreetAddresses);
+    console.log('Personal URLs:', tempPersonalUrls);
+    console.log('Usernames:', tempUsernames);
+  };
 
   const signOutAndSetShowLogOut = () => {
     setShowLogout(false);
