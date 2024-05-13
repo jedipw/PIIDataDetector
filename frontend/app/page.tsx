@@ -22,6 +22,8 @@ export default function Home() {
   const [streetAddresses, setStreetAddresses] = useState({});
   const [personalUrls, setPersonalUrls] = useState({});
   const [usernames, setUsernames] = useState({});
+  let lastSelectedToken = '';
+  let lastSelectedPosition = 0;
 
   const session = useSession({
     required: true,
@@ -213,11 +215,42 @@ export default function Home() {
     return luminance < 0.5;
   };
 
+  const selectTokenInTextarea = (token: string) => {
+    const textarea = document.getElementById('textArea') as HTMLInputElement;
+    if (!textarea) return;
+
+    const text = textarea.value;
+    let startPos = 0;
+
+    // If the last selected token is the same as the current, start searching from the last position
+    if (token === lastSelectedToken) {
+      startPos = text.indexOf(token, lastSelectedPosition + 1);
+    } else {
+      startPos = text.indexOf(token);
+    }
+
+    // If the token is not found or no more occurrences, reset to the first occurrence
+    if (startPos === -1) {
+      startPos = text.indexOf(token);
+      lastSelectedPosition = startPos;
+    }
+
+    if (startPos >= 0) {
+      const endPos = startPos + token.length;
+      textarea.setSelectionRange(startPos, endPos);
+      textarea.focus();
+
+      // Update the last selected token and position
+      lastSelectedToken = token;
+      lastSelectedPosition = startPos;
+    }
+  };
+
   return (
     isFullNameLoading ?
       <div className="h-screen flex flex-col justify-center items-center">
         <Image className="mb-4" width="100" height="100" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} />
-        <div className="text-black font-extrabold text-3xl">Loading...</div>
+        <div className="text-black font-bold text-3xl">Loading...</div>
       </div> : <div className="h-screen relative">
         <div className="absolute h-full overflow-auto left-80" style={{ width: `calc(100vw - 680px)` }}>
           <input
@@ -230,6 +263,7 @@ export default function Home() {
             placeholder="Untitled Document"
           />
           <textarea
+            id="textArea"
             className="w-full pr-20 mt-10 pb-10 text-black text-xl resize-none font-extralight"
             value={textAreaValue}
             onChange={(event) => {
@@ -244,7 +278,7 @@ export default function Home() {
           />
           <button
             disabled={!textAreaValue || isFindingPII}
-            className="absolute w-40 h-16 flex items-center bottom-0 right-0 mb-5 mr-5 bg-[#FAD06D] hover:bg-[#E8A300] text-black font-bold py-2 px-4 rounded shadow-md disabled:opacity-40"
+            className="absolute w-36 h-12 flex items-center bottom-0 right-0 mb-5 mr-5 bg-[#FAD06D] hover:bg-[#E8A300] text-black font-bold py-2 px-4 rounded-xl shadow-md disabled:opacity-40"
             onClick={() => getPII()}
           >
             <Image className="mr-2" width="30" height="30" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
@@ -265,7 +299,7 @@ export default function Home() {
               {Object.keys(fullNames).length !== 0 ?
                 <ul className="mt-3">
                   {Object.entries(fullNames).map(([fullName, count]) => (
-                    <div className="text-black flex pb-1" key={fullName}>
+                    <div className="text-black flex pb-1 cursor-pointer" key={fullName} onClick={() => selectTokenInTextarea(fullName)}>
                       {`•`}
                       <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
                         {`${count}`}
@@ -286,7 +320,7 @@ export default function Home() {
                 {Object.keys(emails).length !== 0 ?
                   <ul className="mt-3">
                     {Object.entries(emails).map(([email, count]) => (
-                      <div className="text-black flex pb-1" key={email}>
+                      <div className="text-black flex pb-1 cursor-pointer" key={email} onClick={() => selectTokenInTextarea(email)}>
                         {`•`}
                         <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
                           {`${count}`}
@@ -307,7 +341,7 @@ export default function Home() {
                 {Object.keys(idNums).length !== 0 ?
                   <ul className="mt-3">
                     {Object.entries(idNums).map(([idNum, count]) => (
-                      <div className="text-black flex pb-1" key={idNum}>
+                      <div className="text-black flex pb-1 cursor-pointer" key={idNum} onClick={() => selectTokenInTextarea(idNum)}>
                         {`•`}
                         <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
                           {`${count}`}
@@ -328,7 +362,7 @@ export default function Home() {
                 {Object.keys(phoneNums).length !== 0 ?
                   <ul className="mt-3">
                     {Object.entries(phoneNums).map(([phoneNum, count]) => (
-                      <div className="text-black flex pb-1" key={phoneNum}>
+                      <div className="text-black flex pb-1 cursor-pointer" key={phoneNum} onClick={() => selectTokenInTextarea(phoneNum)}>
                         {`•`}
                         <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
                           {`${count}`}
@@ -349,7 +383,7 @@ export default function Home() {
                 {Object.keys(streetAddresses).length !== 0 ?
                   <ul className="mt-3">
                     {Object.entries(streetAddresses).map(([streetAddress, count]) => (
-                      <div className="text-black flex pb-1" key={streetAddress}>
+                      <div className="text-black flex pb-1 cursor-pointer" key={streetAddress} onClick={() => selectTokenInTextarea(streetAddress)}>
                         {`•`}
                         <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
                           {`${count}`}
@@ -370,7 +404,7 @@ export default function Home() {
                 {Object.keys(personalUrls).length !== 0 ?
                   <ul className="mt-3">
                     {Object.entries(personalUrls).map(([personalUrl, count]) => (
-                      <div className="text-black flex pb-1" key={personalUrl}>
+                      <div className="text-black flex pb-1 cursor-pointer" key={personalUrl} onClick={() => selectTokenInTextarea(personalUrl)}>
                         {`•`}
                         <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
                           {`${count}`}
@@ -391,7 +425,7 @@ export default function Home() {
                 {Object.keys(usernames).length !== 0 ?
                   <ul className="mt-3">
                     {Object.entries(usernames).map(([username, count]) => (
-                      <div className="text-black flex pb-1" key={username}>
+                      <div className="text-black flex pb-1 cursor-pointer" key={username} onClick={() => selectTokenInTextarea(username)}>
                         {`•`}
                         <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
                           {`${count}`}
