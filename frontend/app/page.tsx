@@ -697,11 +697,12 @@ export default function Home() {
             className="flex pl-2 pr-2 pt-3 pb-3 mb-5 w-full rounded-xl items-center justify-between"
             onMouseEnter={() => setIsNewButtonHovered(true)}
             onMouseLeave={() => setIsNewButtonHovered(false)}
-            disabled={isAPIBeingCalled || isBeingDeleted}
+            disabled={isAPIBeingCalled || isBeingDeleted || isFindingPII}
             onClick={() => createNewDocument()}
             style=
             {{
-              backgroundColor: isNewButtonHovered ? '#EBEBEB' : ''
+              backgroundColor: isNewButtonHovered ? '#EBEBEB' : '',
+              cursor: isAPIBeingCalled || isBeingDeleted || isFindingPII ? 'not-allowed' : ''
             }}
           >
             <div className="flex items-center">
@@ -715,7 +716,7 @@ export default function Home() {
           {[...allTexts.texts].reverse().map((text: TextResponse) => (
             <div className="flex" key={text.textId}>
               <TextSelectionButton
-                disabled={isAPIBeingCalled || isBeingDeleted}
+                disabled={isAPIBeingCalled || isBeingDeleted || isFindingPII}
                 focused={text.textId === textId}
                 textTitle={text.textTitle}
                 textContent={text.textContent}
@@ -729,7 +730,7 @@ export default function Home() {
                 onClick={() => {
                   handleDelete(text.textId);
                 }}
-                disabled={isBeingDeleted}
+                disabled={isBeingDeleted || isAPIBeingCalled || isFindingPII}
               />
             </div>
 
