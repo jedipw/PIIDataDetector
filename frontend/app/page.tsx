@@ -33,6 +33,7 @@ export default function Home() {
   const [allTexts, setAllTexts] = useState<AllTextsResponse>({ texts: [] });
   const [isBeingDeleted, setIsBeingDeleted] = useState(false);
   const [isAPIBeingCalled, setIsAPIBeingCalled] = useState(false);
+  const [isBeingSelected, setIsBeingSelected] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   let lastSelectedToken = '';
@@ -214,23 +215,27 @@ export default function Home() {
 
     typingTimeoutRef.current = setTimeout(() => {
       if (textContent.trim() || textTitle.trim()) {
-        if (!textId) {
-          if (textContent && textTitle) {
-            createTextWithTitleAndContent();
-          }
-          else if (textTitle) {
-            createTextWithTitle();
-          } else if (textContent) {
-            createTextWithContent();
-          }
+        if(isBeingSelected) {
+          setIsBeingSelected(false);
         } else {
-          if (prevTextContent !== textContent && prevTextTitle !== textTitle) {
-            editTextTitleAndContent();
-          }
-          else if (prevTextContent !== textContent) {
-            editTextContent();
-          } else if (prevTextTitle !== textTitle) {
-            editTextTitle();
+          if (!textId) {
+            if (textContent && textTitle) {
+              createTextWithTitleAndContent();
+            }
+            else if (textTitle) {
+              createTextWithTitle();
+            } else if (textContent) {
+              createTextWithContent();
+            }
+          } else {
+            if (prevTextContent !== textContent && prevTextTitle !== textTitle) {
+              editTextTitleAndContent();
+            }
+            else if (prevTextContent !== textContent) {
+              editTextContent();
+            } else if (prevTextTitle !== textTitle) {
+              editTextTitle();
+            }
           }
         }
       }
@@ -698,6 +703,7 @@ export default function Home() {
                   textTitle={text.textTitle}
                   textContent={text.textContent}
                   onClick={() => {
+                    setIsBeingSelected(true);
                     setTextTitle(text.textTitle);
                     setTextContent(text.textContent);
                     setTextId(text.textId);
