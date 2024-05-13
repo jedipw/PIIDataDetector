@@ -124,10 +124,7 @@ export default function Signup() {
                     // Handle the response from the backend
                     if (response.ok) {
                         // User created successfully
-                        console.log('User created successfully');
                         sendEmailVerification(user).then(() => {
-                            // Email sent
-                            console.log("Verification email sent.");
                             // Ensure router is used after the email has been sent
                             router.push(`/verify-email?email=${email}`);
                         }).catch((error) => {

@@ -8,7 +8,6 @@ import PIIResponse from "./types/PIIResponse";
 import AllTextsResponse from "./types/AllTextsResponse";
 import TextResponse from "./types/TextResponse";
 import DeleteButton from "@/components/DeleteButton";
-import { set } from "firebase/database";
 export default function Home() {
   const [fullName, setFullName] = useState('');
   const [userId, setUserId] = useState('');
@@ -52,7 +51,6 @@ export default function Home() {
       const data = await response.json();
       setAllTexts(data);
       setIsBeingDeleted(false);
-      console.log('All texts:', data);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
@@ -61,9 +59,7 @@ export default function Home() {
   const handleDelete = async (deletedTextId: string) => {
     try {
       setIsBeingDeleted(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/text/deleteText/${deletedTextId}`, { method: 'DELETE' });
-      const data = await response.json();
-      console.log('Text deleted:', data);
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/text/deleteText/${deletedTextId}`, { method: 'DELETE' });
       if (deletedTextId === textId) {
         setTextTitle('');
         setTextContent('');
@@ -85,7 +81,6 @@ export default function Home() {
         setAllTexts(data);
         setIsBeingDeleted(false);
         setIsAPIBeingCalled(false);
-        console.log('All texts:', data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -104,7 +99,6 @@ export default function Home() {
           body: JSON.stringify(requestBody)
         });
         const data = await response.json();
-        console.log('Text saved:', data);
         setTextId(data.text.textId);
         setPrevTextTitle(textTitle);
         fetchAllTexts()
@@ -118,15 +112,13 @@ export default function Home() {
         setIsAPIBeingCalled(true);
         const requestBody = { textId, textTitle };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editTitle`;
-        const response = await fetch(url, {
+        await fetch(url, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(requestBody)
         });
-        const data = await response.json();
-        console.log('Text updated:', data);
         setPrevTextTitle(textTitle);
         fetchAllTexts()
       } catch (error) {
@@ -147,7 +139,6 @@ export default function Home() {
           body: JSON.stringify(requestBody)
         });
         const data = await response.json();
-        console.log('Text saved:', data);
         setTextId(data.text.textId);
         setPrevTextContent(textContent);
         fetchAllTexts()
@@ -161,15 +152,13 @@ export default function Home() {
         setIsAPIBeingCalled(true);
         const requestBody = { textId, textContent };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editContent`;
-        const response = await fetch(url, {
+        await fetch(url, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(requestBody)
         });
-        const data = await response.json();
-        console.log('Text updated:', data);
         setPrevTextContent(textContent);
         fetchAllTexts()
       } catch (error) {
@@ -194,7 +183,6 @@ export default function Home() {
         setPrevTextContent(textContent);
         setPrevTextTitle(textTitle);
         fetchAllTexts()
-        console.log('Text saved:', data)
       } catch (error) {
         console.error('Failed to save text:', error);
       }
@@ -205,15 +193,13 @@ export default function Home() {
         setIsAPIBeingCalled(true);
         const requestBody = { textId, textTitle, textContent };
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/text/editTitleAndContent`;
-        const response = await fetch(url, {
+        await fetch(url, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(requestBody)
         });
-        const data = await response.json();
-        console.log('Text updated:', data);
         setPrevTextTitle(textTitle);
         setPrevTextContent(textContent);
         fetchAllTexts()
@@ -281,11 +267,9 @@ export default function Home() {
         const data1 = await response1.json();
         setFullName(`${data1['firstName']} ${data1['lastName']}`);
         setUserId(data1['userId']);
-        console.log('Full name:', fullName)
         const response2 = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/text/getAllTexts/${data1['userId']}`, { method: 'GET' });
         const data2 = await response2.json();
         setAllTexts(data2);
-        console.log('All texts:', data2);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -313,11 +297,8 @@ export default function Home() {
         body: JSON.stringify(requestBody)
       });
       const data = await response.json();
-      console.log(typeof (data));
       setIsFindingPII(false);
       processPII(data);
-
-      console.log('PII:', data);
     } catch (error) {
       console.error('Failed to fetch PII:', error);
     }
@@ -393,7 +374,6 @@ export default function Home() {
       }
     }
 
-    // Update state with the extracted information
     setFullNames(tempFullNames);
     setEmails(tempEmails);
     setIdNums(tempIdNums);
@@ -401,14 +381,6 @@ export default function Home() {
     setStreetAddresses(tempStreetAddresses);
     setPersonalUrls(tempPersonalUrls);
     setUsernames(tempUsernames);
-
-    console.log('Full names:', tempFullNames);
-    console.log('Emails:', tempEmails);
-    console.log('ID numbers:', tempIdNums);
-    console.log('Phone numbers:', tempPhoneNums);
-    console.log('Street addresses:', tempStreetAddresses);
-    console.log('Personal URLs:', tempPersonalUrls);
-    console.log('Usernames:', tempUsernames);
   };
 
   const signOutAndSetShowLogOut = () => {
