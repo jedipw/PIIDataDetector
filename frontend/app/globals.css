@@ -25,3 +25,11 @@ body {
     text-wrap: balance;
   }
 }
+
+textarea:focus::selection {
+  background-color: #FAD06D;
+}
+
+input:focus::selection {
+  background-color: #FAD06D;
+}

@@ -27,8 +27,7 @@ export default function Home() {
   const [personalUrls, setPersonalUrls] = useState({});
   const [usernames, setUsernames] = useState({});
   const [textId, setTextId] = useState('');
-  const typingTitleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const typingContentTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   let lastSelectedToken = '';
   let lastSelectedPosition = 0;
@@ -161,6 +160,21 @@ export default function Home() {
     signOut()
   };
 
+  const createNewDocument = () => {
+    setTextTitle('');
+    setTextContent('');
+    setTextId('');
+    setPrevTextTitle('');
+    setPrevTextContent('');
+    setFullNames({});
+    setEmails({});
+    setIdNums({});
+    setPhoneNums({});
+    setStreetAddresses({});
+    setPersonalUrls({});
+    setUsernames({});
+  }
+
   useEffect(() => {
     const createTextWithTitle = async () => {
       try {
@@ -261,11 +275,11 @@ export default function Home() {
       }
     }
 
-    if (typingTitleTimeoutRef.current) {
-      clearTimeout(typingTitleTimeoutRef.current);
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
     }
 
-    typingTitleTimeoutRef.current = setTimeout(() => {
+    typingTimeoutRef.current = setTimeout(() => {
       if (textContent.trim() || textTitle.trim()) {
         if (!textId) {
           if (textContent && textTitle) {
@@ -288,8 +302,8 @@ export default function Home() {
 
     // Cleanup function to clear the timeout when the component unmounts or before setting a new timeout
     return () => {
-      if (typingTitleTimeoutRef.current) {
-        clearTimeout(typingTitleTimeoutRef.current);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
       }
     };
   }, [textTitle, userId, textId, prevTextContent, prevTextTitle, textContent]);
@@ -420,6 +434,7 @@ export default function Home() {
           />
           <textarea
             id="textArea"
+            disabled={isFindingPII}
             className="w-full pr-20 mt-10 pb-10 text-black text-xl resize-none font-extralight"
             value={textContent}
             onChange={(event) => {
@@ -428,7 +443,8 @@ export default function Home() {
             style={{
               lineHeight: 'normal',
               outline: 'none',
-              height: 'calc(100vh - 150px)'
+              height: 'calc(100vh - 150px)',
+              cursor: isFindingPII ? 'not-allowed' : 'text',
             }}
             placeholder="Type or paste your text here..."
           />
@@ -600,6 +616,7 @@ export default function Home() {
             className="flex pl-2 pr-2 pt-3 pb-3 mb-5 w-full rounded-xl items-center justify-between"
             onMouseEnter={() => setIsNewButtonHovered(true)}
             onMouseLeave={() => setIsNewButtonHovered(false)}
+            onClick={() => createNewDocument()}
             style=
             {{
               backgroundColor: isNewButtonHovered ? '#EBEBEB' : ''
