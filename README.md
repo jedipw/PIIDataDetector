@@ -1,6 +1,6 @@
 # PII Data Detector
 
-The Personally Identifiable Information (PII) Data Detector is an individual machine learning project developed as part of the CSC532 Machine Learning course. The goal of this project is to detect personally identifiable information (PII) in student writing. In the web application, users can input text into the rich text editor. The application will then highlight words considered as PII and suggest removing those words. Additionally, users can save the text for later viewing.
+The Personally Identifiable Information (PII) Data Detector is an individual machine learning project developed as part of the CSC532 Machine Learning course. The goal of this project is to detect personally identifiable information (PII) in student writing. In the web application, users can input text into the text editor. The application will then highlight words considered as PII and suggest removing those words. Additionally, users can save the text for later viewing.
 
 ## Technology Stacks
 
@@ -9,22 +9,30 @@ The Personally Identifiable Information (PII) Data Detector is an individual mac
 - TypeScript
 - Go
 
-<b>AI/Data Science Libraries:</b>
-- Tensorflow
-- Keras
+<b>AI/Data Science Tools:</b>
+- PEFT
+- Spacy
+- Transformers
+- Gemma
+- Faker
 - Numpy
-- Matplotlib
 - Pandas
+- Matplotlib
+- Seaborn
 
 <b>Development Tools:</b>
 - <b>Web Application:</b> NextJS
-- <b>Backend API:</b> Go Fiber
+- <b>Backend APIs:</b> Go Fiber, Flask
 - <b>Database:</b> PostgreSQL
 - <b>Database ORM:</b> Prisma
-- <b>3rd Party APIs:</b> Firebase Authentication
+- <b>3rd Party API:</b> Firebase Authentication
 - <b>Container Management:</b> Docker
 - <b>Hosting:</b> Google Cloud Run
 - <b>CI/CD:</b> GitHub Action
+
+## Screenshot
+
+![PIIDataDetector_Screenshot](https://github.com/jedipw/PIIDataDetector/assets/82791342/3f3d4407-c9e6-419a-b89e-331e39f3bad0)
 
 ## First Time Setup
 ### PII Data Detector
