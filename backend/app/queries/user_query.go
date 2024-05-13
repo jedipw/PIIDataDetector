@@ -34,30 +34,3 @@ func GetUserDetail(c *fiber.Ctx, client *db.PrismaClient, email string) (string,
 
 	return user.UserID, user.FirstName, user.LastName, nil
 }
-
-func ChangeFullName(c *fiber.Ctx, client *db.PrismaClient, userRequest types.ChangeFullNameRequest) (*db.UserModel, error) {
-	// Use Prisma Client to update the user's full name
-	updatedUser, err := client.User.FindUnique(db.User.UserID.Equals(userRequest.UserID)).Update(
-		db.User.FirstName.Set(userRequest.FirstName),
-		db.User.LastName.Set(userRequest.LastName),
-	).Exec(c.Context())
-
-	if err != nil {
-		return nil, err
-	}
-
-	return updatedUser, nil
-}
-
-func DeleteUser(c *fiber.Ctx, client *db.PrismaClient, userID string) (*db.UserModel ,error) {
-	// Use Prisma Client to delete the user
-	deletedUser, err := client.User.FindUnique(
-		db.User.UserID.Equals(userID),
-	).Delete().Exec(c.Context())
-
-	if err != nil {
-		return nil ,err
-	}
-
-	return deletedUser, nil
-}

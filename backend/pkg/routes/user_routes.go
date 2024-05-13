@@ -17,12 +17,4 @@ func UserRoutes(a *fiber.App, client *db.PrismaClient) {
 	route.Get("/:email", func(c *fiber.Ctx) error {
 		return controllers.GetUserDetail(c, client)
 	})
-
-	route.Put("/changeFullName", func(c *fiber.Ctx) error {
-		return controllers.ChangeFullName(c, client)
-	})
-
-	route.Delete("/:userId", func(c *fiber.Ctx) error {
-		return controllers.DeleteUser(c, client)
-	})
 }
