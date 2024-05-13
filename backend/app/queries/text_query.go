@@ -126,23 +126,3 @@ func DeleteText(c *fiber.Ctx, client *db.PrismaClient, textID string) (*db.TextM
 
 	return deletedText, nil
 }
-
-func DeleteAllTexts(c *fiber.Ctx, client *db.PrismaClient, userID string) ([]*db.TextModel, error) {
-	deletedTexts, findErr := client.Text.FindMany(
-		db.Text.UserID.Equals(userID),
-	).Exec(c.Context())
-
-	if findErr != nil {
-		return nil, findErr
-	}
-
-	_, deleteErr := client.Text.FindMany(
-		db.Text.UserID.Equals(userID),
-	).Delete().Exec(c.Context())
-
-	if deleteErr != nil {
-		return nil, deleteErr
-	}
-
-	return utils.ConvertToPointer(deletedTexts), nil
-}

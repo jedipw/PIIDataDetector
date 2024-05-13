@@ -163,19 +163,3 @@ func DeleteText(c *fiber.Ctx, client *db.PrismaClient) error {
 		"text":    deletedText,
 	})
 }
-
-func DeleteAllTexts(c *fiber.Ctx, client *db.PrismaClient) error {
-	// Get the user ID from the URL parameter
-	userID := c.Params("userId")
-
-	deletedTexts, deleteErr := queries.DeleteAllTexts(c, client, userID)
-	if deleteErr != nil {
-		fmt.Println("Error deleting texts:", deleteErr)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete texts"})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Successfully deleted texts",
-		"texts":    deletedTexts,
-	})
-}

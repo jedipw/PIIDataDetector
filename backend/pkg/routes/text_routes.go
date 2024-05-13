@@ -41,8 +41,4 @@ func TextRoutes(a *fiber.App, client *db.PrismaClient) {
 	route.Delete("/deleteText/:textId", func(c *fiber.Ctx) error {
 		return controllers.DeleteText(c, client)
 	})
-
-	route.Delete("/deleteAllTexts/:userId", func(c *fiber.Ctx) error {
-		return controllers.DeleteAllTexts(c, client)
-	})
 }
