@@ -248,59 +248,162 @@ export default function Home() {
             onClick={() => getPII()}
           >
             <Image className="mr-2" width="30" height="30" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
-            <p className="text-lg">Find PII</p>
+            <p className="text-xl">Find PII</p>
           </button>
         </div>
-        <div className="absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto" style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)' }}>
-          <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
-            <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
-              <Image width="20" height="20" src="/name.svg" alt="Names" className="mr-2" style={{ filter: 'invert(100%)' }} />
-              <p className="text-black font-bold text-md">Names</p>
+        <div className={`absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto ${isFindingPII && 'flex '}} items-center`} style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)' }}>
+          {isFindingPII ?
+            <div className="flex flex-col w-full items-center">
+              <Image className="mr-2 mb-2" width="100" height="100" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
+              <div className=" text-black text-xl font-bold w-full text-center">Finding PII...</div>
             </div>
-            <p className="pt-3 text-gray-400 italic">No names detected</p>
-          </div>
-          <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
-            <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
-              <Image width="20" height="20" src="/email.svg" alt="Emails" className="mr-2" style={{ filter: 'invert(100%)' }} />
-              <p className="text-black font-bold text-md">Emails</p>
+            : <><div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+              <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+                <Image width="20" height="20" src="/name.svg" alt="Names" className="mr-2" style={{ filter: 'invert(100%)' }} />
+                <p className="text-black font-bold text-md">Names</p>
+              </div>
+              {Object.keys(fullNames).length !== 0 ?
+                <ul className="mt-3">
+                  {Object.entries(fullNames).map(([fullName, count]) => (
+                    <div className="text-black flex pb-1" key={fullName}>
+                      {`•`}
+                      <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
+                        {`${count}`}
+                      </div>
+                      <div className="truncate">
+                        {`${fullName}`}
+                      </div>
+                    </div>
+                  ))}
+                </ul>
+                : <p className="pt-3 text-gray-400 italic">No names detected</p>}
             </div>
-            <p className="pt-3 text-gray-400 italic">No emails detected</p>
-          </div>
-          <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
-            <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
-              <Image width="20" height="20" src="/id_number.svg" alt="ID Numbers" className="mr-2" style={{ filter: 'invert(100%)' }} />
-              <p className="text-black font-bold text-md">ID Numbers</p>
-            </div>
-            <p className="pt-3 text-gray-400 italic">No ID numbers detected</p>
-          </div>
-          <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
-            <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
-              <Image width="20" height="20" src="/phone_number.svg" alt="Phone Numbers" className="mr-2" style={{ filter: 'invert(100%)' }} />
-              <p className="text-black font-bold text-md">Phone Numbers</p>
-            </div>
-            <p className="pt-3 text-gray-400 italic">No phone numbers detected</p>
-          </div>
-          <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
-            <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
-              <Image width="20" height="20" src="/address.svg" alt="Street Addresses" className="mr-2" style={{ filter: 'invert(100%)' }} />
-              <p className="text-black font-bold text-md">Street Addresses</p>
-            </div>
-            <p className="pt-3 text-gray-400 italic">No street addresses detected</p>
-          </div>
-          <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
-            <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
-              <Image width="20" height="20" src="/url.svg" alt="URLs" className="mr-2" style={{ filter: 'invert(100%)' }} />
-              <p className="text-black font-bold text-md">URLs</p>
-            </div>
-            <p className="pt-3 text-gray-400 italic">No URLs detected</p>
-          </div>
-          <div className="mt-5 p-4 rounded-xl mb-5" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
-            <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
-              <Image width="20" height="20" src="/username.svg" alt="Usernames" className="mr-2" style={{ filter: 'invert(100%)' }} />
-              <p className="text-black font-bold text-md">Usernames</p>
-            </div>
-            <p className="pt-3 text-gray-400 italic">No usernames detected</p>
-          </div>
+              <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+                  <Image width="20" height="20" src="/email.svg" alt="Emails" className="mr-2" style={{ filter: 'invert(100%)' }} />
+                  <p className="text-black font-bold text-md">Emails</p>
+                </div>
+                {Object.keys(emails).length !== 0 ?
+                  <ul className="mt-3">
+                    {Object.entries(emails).map(([email, count]) => (
+                      <div className="text-black flex pb-1" key={email}>
+                        {`•`}
+                        <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
+                          {`${count}`}
+                        </div>
+                        <div className="truncate">
+                          {`${email}`}
+                        </div>
+                      </div>
+                    ))}
+                  </ul>
+                  : <p className="pt-3 text-gray-400 italic">No emails detected</p>}
+              </div>
+              <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+                  <Image width="20" height="20" src="/id_number.svg" alt="ID Numbers" className="mr-2" style={{ filter: 'invert(100%)' }} />
+                  <p className="text-black font-bold text-md">ID Numbers</p>
+                </div>
+                {Object.keys(idNums).length !== 0 ?
+                  <ul className="mt-3">
+                    {Object.entries(idNums).map(([idNum, count]) => (
+                      <div className="text-black flex pb-1" key={idNum}>
+                        {`•`}
+                        <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
+                          {`${count}`}
+                        </div>
+                        <div className="truncate">
+                          {`${idNum}`}
+                        </div>
+                      </div>
+                    ))}
+                  </ul>
+                  : <p className="pt-3 text-gray-400 italic">No ID numbers detected</p>}
+              </div>
+              <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+                  <Image width="20" height="20" src="/phone_number.svg" alt="Phone Numbers" className="mr-2" style={{ filter: 'invert(100%)' }} />
+                  <p className="text-black font-bold text-md">Phone Numbers</p>
+                </div>
+                {Object.keys(phoneNums).length !== 0 ?
+                  <ul className="mt-3">
+                    {Object.entries(phoneNums).map(([phoneNum, count]) => (
+                      <div className="text-black flex pb-1" key={phoneNum}>
+                        {`•`}
+                        <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
+                          {`${count}`}
+                        </div>
+                        <div className="truncate">
+                          {`${phoneNum}`}
+                        </div>
+                      </div>
+                    ))}
+                  </ul>
+                  : <p className="pt-3 text-gray-400 italic">No phone numbers detected</p>}
+              </div>
+              <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+                  <Image width="20" height="20" src="/address.svg" alt="Street Addresses" className="mr-2" style={{ filter: 'invert(100%)' }} />
+                  <p className="text-black font-bold text-md">Street Addresses</p>
+                </div>
+                {Object.keys(streetAddresses).length !== 0 ?
+                  <ul className="mt-3">
+                    {Object.entries(streetAddresses).map(([streetAddress, count]) => (
+                      <div className="text-black flex pb-1" key={streetAddress}>
+                        {`•`}
+                        <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
+                          {`${count}`}
+                        </div>
+                        <div className="truncate">
+                          {`${streetAddress}`}
+                        </div>
+                      </div>
+                    ))}
+                  </ul>
+                  : <p className="pt-3 text-gray-400 italic">No street addresses detected</p>}
+              </div>
+              <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+                  <Image width="20" height="20" src="/url.svg" alt="URLs" className="mr-2" style={{ filter: 'invert(100%)' }} />
+                  <p className="text-black font-bold text-md">Personal URLs</p>
+                </div>
+                {Object.keys(personalUrls).length !== 0 ?
+                  <ul className="mt-3">
+                    {Object.entries(personalUrls).map(([personalUrl, count]) => (
+                      <div className="text-black flex pb-1" key={personalUrl}>
+                        {`•`}
+                        <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
+                          {`${count}`}
+                        </div>
+                        <div className="truncate">
+                          {`${personalUrl}`}
+                        </div>
+                      </div>
+                    ))}
+                  </ul>
+                  : <p className="pt-3 text-gray-400 italic">No Personal URLs detected</p>}
+              </div>
+              <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex bg- pl-3 pt-1 pb-1 rounded-full bg-[#FAD06D]">
+                  <Image width="20" height="20" src="/username.svg" alt="Usernames" className="mr-2" style={{ filter: 'invert(100%)' }} />
+                  <p className="text-black font-bold text-md">Usernames</p>
+                </div>
+                {Object.keys(usernames).length !== 0 ?
+                  <ul className="mt-3">
+                    {Object.entries(usernames).map(([username, count]) => (
+                      <div className="text-black flex pb-1" key={username}>
+                        {`•`}
+                        <div className='w-6 h-6 rounded-full flex flex-shrink-0 items-center justify-center ml-2 mr-2 bg-red-600 text-white'>
+                          {`${count}`}
+                        </div>
+                        <div className="truncate">
+                          {`${username}`}
+                        </div>
+                      </div>
+                    ))}
+                  </ul>
+                  : <p className="pt-3 text-gray-400 italic">No Personal URLs detected</p>}
+              </div></>}
         </div>
         <div className="h-full bg-white p-3 overflow-auto" style={{ width: '275px', height: 'calc(100vh - 80px)', boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.1)' }}>
           <button
