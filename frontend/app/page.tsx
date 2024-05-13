@@ -238,6 +238,10 @@ export default function Home() {
             }
           }
         }
+      } else {
+        if (textId) {
+          handleDelete(textId);
+        }
       }
     }, 1000);
 
