@@ -8,6 +8,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full bg-white">
+      <head>
+        <title>Jedipw - PII Data Detector</title>
+        <link rel="icon" type="image/png" href="/write.png"></link>
+      </head>
       <body className="h-full">
         <SessionProvider>
             {children}
