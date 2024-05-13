@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Api, Resource, reqparse
+from flask_cors import CORS
 
 import os
 import re
@@ -18,6 +19,8 @@ from transformers.data.data_collator import DataCollatorForTokenClassification
 
 app = Flask(__name__)
 api = Api(app)
+
+CORS(app, origin=["http://localhost:3000"])
 
 nlp = English()
 en_tokenizer = English().tokenizer
@@ -107,8 +110,8 @@ pii_get_args.add_argument(
 
 
 class PII(Resource):
-    def get(self):
-        try: 
+    def post(self):
+        try:
             args = pii_get_args.parse_args()
             text = args["text"]
             if text is None:
@@ -152,7 +155,8 @@ class PII(Resource):
             preds_without_o[:, :, o_index] = 0
             preds_without_o = preds_without_o.argmax(-1)
             o_preds = pred_softmax[:, :, o_index]
-            preds_final = np.where(o_preds < CONF_THRESH, preds_without_o, preds)
+            preds_final = np.where(o_preds < CONF_THRESH,
+                                   preds_without_o, preds)
 
             processed = []
             pairs = set()
@@ -213,7 +217,7 @@ class PII(Resource):
                         continue
                     input_idxs = spacy_to_hf(_data, token_idx)
                     probs = pred_softmax[row_idx, input_idxs,
-                                        model.config.label2id["B-URL_PERSONAL"]]
+                                         model.config.label2id["B-URL_PERSONAL"]]
                     if probs.mean() > URL_THRESH:
                         print("The above is PII")
                         processed.append(
@@ -259,7 +263,7 @@ class PII(Resource):
             df = pd.DataFrame(processed + emails + phone_nums)
             df["row_id"] = list(range(len(df)))
 
-            return { "data": data[0], "prediction": df.to_dict()}
+            return {"data": data[0], "prediction": df.to_dict()}
         except Exception as e:
             print(f"An error occured: {e}")
 
@@ -267,4 +271,4 @@ class PII(Resource):
 api.add_resource(PII, "/pii")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8080)

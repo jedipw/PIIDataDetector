@@ -12,6 +12,8 @@ export default function Home() {
   const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [isNewButtonHovered, setIsNewButtonHovered] = useState(false);
   const [isFullNameLoading, setIsFullNameLoading] = useState(true);
+  const [textAreaValue, setTextAreaValue] = useState('');
+  const [isFindingPII, setIsFindingPII] = useState(false);
 
   const session = useSession({
     required: true,
@@ -24,6 +26,26 @@ export default function Home() {
     event.stopPropagation();
     setShowLogout(!showLogout); // Toggle visibility of logout option
   };
+
+  const getPII = async () => {
+    try {
+      setIsFindingPII(true);
+      const requestBody = { 'text': textAreaValue };
+      const url = `${process.env.NEXT_PUBLIC_PII_URL}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+      const data = await response.json();
+      setIsFindingPII(false);
+      console.log('PII:', data);
+    } catch (error) {
+      console.error('Failed to fetch PII:', error);
+    }
+  }
 
   const signOutAndSetShowLogOut = () => {
     setShowLogout(false);
@@ -101,8 +123,7 @@ export default function Home() {
         <div className="absolute h-full overflow-auto left-80" style={{ width: `calc(100vw - 680px)` }}>
           <input
             className="w-full h-10 pr-10 mt-5 text-black text-xl font-bold"
-            style=
-            {{
+            style={{
               lineHeight: 'normal',
               outline: 'none',
               height: '50px'
@@ -111,14 +132,25 @@ export default function Home() {
           />
           <textarea
             className="w-full pr-20 mt-10 pb-10 text-black text-xl resize-none font-extralight"
-            style=
-            {{
+            value={textAreaValue}
+            onChange={(event) => {
+              setTextAreaValue(event.target.value);
+            }}
+            style={{
               lineHeight: 'normal',
               outline: 'none',
               height: 'calc(100vh - 150px)'
             }}
             placeholder="Type or paste your text here..."
           />
+          <button
+            disabled={!textAreaValue || isFindingPII}
+            className="absolute w-40 h-16 flex items-center bottom-0 right-0 mb-5 mr-5 bg-[#FAD06D] hover:bg-[#E8A300] text-black font-bold py-2 px-4 rounded shadow-md disabled:opacity-40"
+            onClick={() => getPII()}
+          >
+            <Image className="mr-2" width="30" height="30" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
+            <p className="text-lg">Find PII</p>
+          </button>
         </div>
         <div className="absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto" style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)' }}>
           <div className="mt-5 p-4 rounded-xl" style={{ boxShadow: '10px 0 15px -3px rgba(0, 0, 0, 0.3)' }}>

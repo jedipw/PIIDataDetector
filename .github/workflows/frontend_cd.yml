@@ -47,7 +47,8 @@ jobs:
           NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           
-          NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" > .env
+          NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_PII_URL=${{ secrets.NEXT_PUBLIC_PII_URL }}" > .env
 
       - name: Build and tag the docker image
         run: |-
