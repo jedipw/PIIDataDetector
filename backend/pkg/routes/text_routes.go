@@ -26,10 +26,6 @@ func TextRoutes(a *fiber.App, client *db.PrismaClient) {
 		return controllers.GetAllTexts(c, client)
 	})
 
-	route.Get("/getText/:textId", func(c *fiber.Ctx) error {
-		return controllers.GetText(c, client)
-	})
-
 	route.Put("/editTitle", func(c *fiber.Ctx) error {
 		return controllers.EditTitle(c, client)
 	})

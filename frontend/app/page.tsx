@@ -5,7 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import TextSelectionButton from "@/components/TextSelectionButton";
 import PIIResponse from "./types/PIIResponse";
-
+import AllTextsResponse from "./types/AllTextsResponse";
+import TextResponse from "./types/TextResponse";
+import { set } from "firebase/database";
 export default function Home() {
   const [fullName, setFullName] = useState('');
   const [userId, setUserId] = useState('');
@@ -14,6 +16,7 @@ export default function Home() {
   const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [isNewButtonHovered, setIsNewButtonHovered] = useState(false);
   const [isFullNameLoading, setIsFullNameLoading] = useState(true);
+  const [isAllTextsLoading, setIsAllTextsLoading] = useState(true);
   const [textTitle, setTextTitle] = useState('');
   const [textContent, setTextContent] = useState('');
   const [prevTextTitle, setPrevTextTitle] = useState('');
@@ -27,6 +30,7 @@ export default function Home() {
   const [personalUrls, setPersonalUrls] = useState({});
   const [usernames, setUsernames] = useState({});
   const [textId, setTextId] = useState('');
+  const [allTexts, setAllTexts] = useState<AllTextsResponse>({ texts: [] });
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   let lastSelectedToken = '';
@@ -38,142 +42,6 @@ export default function Home() {
       redirect('/signin');
     },
   });
-
-  const handleUserClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.stopPropagation();
-    setShowLogout(!showLogout); // Toggle visibility of logout option
-  };
-
-  const getPII = async () => {
-    try {
-      setIsFindingPII(true);
-      const requestBody = { 'text': textContent };
-      const url = `${process.env.NEXT_PUBLIC_PII_URL}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-      });
-      const data = await response.json();
-      console.log(typeof (data));
-      setIsFindingPII(false);
-      processPII(data);
-
-      console.log('PII:', data);
-    } catch (error) {
-      console.error('Failed to fetch PII:', error);
-    }
-  }
-
-  const processPII = (data: PIIResponse) => {
-    let tempFullNames: {
-      [key: string]: number;
-    } = {};
-    let tempEmails: {
-      [key: string]: number;
-    } = {};
-    let tempIdNums: {
-      [key: string]: number;
-    } = {};
-    let tempPhoneNums: {
-      [key: string]: number;
-    } = {};
-    let tempStreetAddresses: {
-      [key: string]: number;
-    } = {};
-    let tempPersonalUrls: {
-      [key: string]: number;
-    } = {};
-    let tempUsernames: {
-      [key: string]: number;
-    } = {};
-    let currentPII = '';
-    let currentType = '';
-
-    const tokens = data.data.tokens;
-    const labels = data.prediction.label;
-    const trailingWhitespace = data.data.trailing_whitespace;
-
-    if (!tokens || !labels || !trailingWhitespace) return;
-
-    Object.keys(labels).forEach((key: string) => {
-      const tokenIndex = data.prediction.token[key];
-      const label = labels[key];
-      const token = tokens[tokenIndex];
-      const space = trailingWhitespace[tokenIndex] ? ' ' : '';
-
-      if (label.startsWith('B-')) {
-        if (currentPII !== '') {
-          let trimmedPII = currentPII.trim();
-          switch (currentType) {
-            case 'B-NAME_STUDENT': tempFullNames[trimmedPII] = (tempFullNames[trimmedPII] || 0) + 1; break;
-            case 'B-EMAIL': tempEmails[trimmedPII] = (tempEmails[trimmedPII] || 0) + 1; break;
-            case 'B-ID_NUM': tempIdNums[trimmedPII] = (tempIdNums[trimmedPII] || 0) + 1; break;
-            case 'B-PHONE_NUM': tempPhoneNums[trimmedPII] = (tempPhoneNums[trimmedPII] || 0) + 1; break;
-            case 'B-STREET_ADDRESS': tempStreetAddresses[trimmedPII] = (tempStreetAddresses[trimmedPII] || 0) + 1; break;
-            case 'B-URL_PERSONAL': tempPersonalUrls[trimmedPII] = (tempPersonalUrls[trimmedPII] || 0) + 1; break;
-            case 'B-USERNAME': tempUsernames[trimmedPII] = (tempUsernames[trimmedPII] || 0) + 1; break;
-          }
-        }
-        currentPII = token + space;
-        currentType = label;
-      } else if (label.startsWith('I-')) {
-        currentPII += token + space;
-      }
-    });
-
-    if (currentPII !== '') {
-      let trimmedPII = currentPII.trim();
-      switch (currentType) {
-        case 'B-NAME_STUDENT': tempFullNames[trimmedPII] = (tempFullNames[trimmedPII] || 0) + 1; break;
-        case 'B-EMAIL': tempEmails[trimmedPII] = (tempEmails[trimmedPII] || 0) + 1; break;
-        case 'B-ID_NUM': tempIdNums[trimmedPII] = (tempIdNums[trimmedPII] || 0) + 1; break;
-        case 'B-PHONE_NUM': tempPhoneNums[trimmedPII] = (tempPhoneNums[trimmedPII] || 0) + 1; break;
-        case 'B-STREET_ADDRESS': tempStreetAddresses[trimmedPII] = (tempStreetAddresses[trimmedPII] || 0) + 1; break;
-        case 'B-URL_PERSONAL': tempPersonalUrls[trimmedPII] = (tempPersonalUrls[trimmedPII] || 0) + 1; break;
-        case 'B-USERNAME': tempUsernames[trimmedPII] = (tempUsernames[trimmedPII] || 0) + 1; break;
-      }
-    }
-
-    // Update state with the extracted information
-    setFullNames(tempFullNames);
-    setEmails(tempEmails);
-    setIdNums(tempIdNums);
-    setPhoneNums(tempPhoneNums);
-    setStreetAddresses(tempStreetAddresses);
-    setPersonalUrls(tempPersonalUrls);
-    setUsernames(tempUsernames);
-
-    console.log('Full names:', tempFullNames);
-    console.log('Emails:', tempEmails);
-    console.log('ID numbers:', tempIdNums);
-    console.log('Phone numbers:', tempPhoneNums);
-    console.log('Street addresses:', tempStreetAddresses);
-    console.log('Personal URLs:', tempPersonalUrls);
-    console.log('Usernames:', tempUsernames);
-  };
-
-  const signOutAndSetShowLogOut = () => {
-    setShowLogout(false);
-    signOut()
-  };
-
-  const createNewDocument = () => {
-    setTextTitle('');
-    setTextContent('');
-    setTextId('');
-    setPrevTextTitle('');
-    setPrevTextContent('');
-    setFullNames({});
-    setEmails({});
-    setIdNums({});
-    setPhoneNums({});
-    setStreetAddresses({});
-    setPersonalUrls({});
-    setUsernames({});
-  }
 
   useEffect(() => {
     const createTextWithTitle = async () => {
@@ -325,30 +193,161 @@ export default function Home() {
   useEffect(() => {
     if (!session.data?.user?.email) return;
 
-    const fetchFullName = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${session.data?.user?.email}`, { method: 'GET' });
-        const data = await response.json();
-        setFullName(`${data['firstName']} ${data['lastName']}`);
+        const response1 = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${session.data?.user?.email}`, { method: 'GET' });
+        const data1 = await response1.json();
+        setFullName(`${data1['firstName']} ${data1['lastName']}`);
+        setUserId(data1['userId']);
         console.log('Full name:', fullName)
+        const response2 = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/text/getAllTexts/${data1['userId']}`, { method: 'GET' });
+        const data2 = await response2.json();
+        setAllTexts(data2);
+        console.log('All texts:', data2);
       } catch (error) {
-        console.error('Failed to fetch user full name:', error);
+        console.error('Failed to fetch data:', error);
       }
     };
 
-    const fetchUserId = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${session.data?.user?.email}`, { method: 'GET' });
-        const data = await response.json();
-        setUserId(data['userId']);
-        console.log('User ID:', userId)
-      } catch (error) {
-        console.error('Failed to fetch user ID:', error);
+
+    fetchData().then(() => setIsFullNameLoading(false)).then(() => setIsAllTextsLoading(false));
+  }, [session.data?.user?.email, fullName, userId]);
+
+  const handleUserClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.stopPropagation();
+    setShowLogout(!showLogout); // Toggle visibility of logout option
+  };
+
+  const getPII = async () => {
+    try {
+      setIsFindingPII(true);
+      const requestBody = { 'text': textContent };
+      const url = `${process.env.NEXT_PUBLIC_PII_URL}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+      const data = await response.json();
+      console.log(typeof (data));
+      setIsFindingPII(false);
+      processPII(data);
+
+      console.log('PII:', data);
+    } catch (error) {
+      console.error('Failed to fetch PII:', error);
+    }
+  }
+
+  const processPII = (data: PIIResponse) => {
+    let tempFullNames: {
+      [key: string]: number;
+    } = {};
+    let tempEmails: {
+      [key: string]: number;
+    } = {};
+    let tempIdNums: {
+      [key: string]: number;
+    } = {};
+    let tempPhoneNums: {
+      [key: string]: number;
+    } = {};
+    let tempStreetAddresses: {
+      [key: string]: number;
+    } = {};
+    let tempPersonalUrls: {
+      [key: string]: number;
+    } = {};
+    let tempUsernames: {
+      [key: string]: number;
+    } = {};
+    let currentPII = '';
+    let currentType = '';
+
+    const tokens = data.data.tokens;
+    const labels = data.prediction.label;
+    const trailingWhitespace = data.data.trailing_whitespace;
+
+    if (!tokens || !labels || !trailingWhitespace) return;
+
+    Object.keys(labels).forEach((key: string) => {
+      const tokenIndex = data.prediction.token[key];
+      const label = labels[key];
+      const token = tokens[tokenIndex];
+      const space = trailingWhitespace[tokenIndex] ? ' ' : '';
+
+      if (label.startsWith('B-')) {
+        if (currentPII !== '') {
+          let trimmedPII = currentPII.trim();
+          switch (currentType) {
+            case 'B-NAME_STUDENT': tempFullNames[trimmedPII] = (tempFullNames[trimmedPII] || 0) + 1; break;
+            case 'B-EMAIL': tempEmails[trimmedPII] = (tempEmails[trimmedPII] || 0) + 1; break;
+            case 'B-ID_NUM': tempIdNums[trimmedPII] = (tempIdNums[trimmedPII] || 0) + 1; break;
+            case 'B-PHONE_NUM': tempPhoneNums[trimmedPII] = (tempPhoneNums[trimmedPII] || 0) + 1; break;
+            case 'B-STREET_ADDRESS': tempStreetAddresses[trimmedPII] = (tempStreetAddresses[trimmedPII] || 0) + 1; break;
+            case 'B-URL_PERSONAL': tempPersonalUrls[trimmedPII] = (tempPersonalUrls[trimmedPII] || 0) + 1; break;
+            case 'B-USERNAME': tempUsernames[trimmedPII] = (tempUsernames[trimmedPII] || 0) + 1; break;
+          }
+        }
+        currentPII = token + space;
+        currentType = label;
+      } else if (label.startsWith('I-')) {
+        currentPII += token + space;
+      }
+    });
+
+    if (currentPII !== '') {
+      let trimmedPII = currentPII.trim();
+      switch (currentType) {
+        case 'B-NAME_STUDENT': tempFullNames[trimmedPII] = (tempFullNames[trimmedPII] || 0) + 1; break;
+        case 'B-EMAIL': tempEmails[trimmedPII] = (tempEmails[trimmedPII] || 0) + 1; break;
+        case 'B-ID_NUM': tempIdNums[trimmedPII] = (tempIdNums[trimmedPII] || 0) + 1; break;
+        case 'B-PHONE_NUM': tempPhoneNums[trimmedPII] = (tempPhoneNums[trimmedPII] || 0) + 1; break;
+        case 'B-STREET_ADDRESS': tempStreetAddresses[trimmedPII] = (tempStreetAddresses[trimmedPII] || 0) + 1; break;
+        case 'B-URL_PERSONAL': tempPersonalUrls[trimmedPII] = (tempPersonalUrls[trimmedPII] || 0) + 1; break;
+        case 'B-USERNAME': tempUsernames[trimmedPII] = (tempUsernames[trimmedPII] || 0) + 1; break;
       }
     }
 
-    fetchFullName().then(() => fetchUserId()).then(() => setIsFullNameLoading(false));
-  }, [session.data?.user?.email, fullName, userId]);
+    // Update state with the extracted information
+    setFullNames(tempFullNames);
+    setEmails(tempEmails);
+    setIdNums(tempIdNums);
+    setPhoneNums(tempPhoneNums);
+    setStreetAddresses(tempStreetAddresses);
+    setPersonalUrls(tempPersonalUrls);
+    setUsernames(tempUsernames);
+
+    console.log('Full names:', tempFullNames);
+    console.log('Emails:', tempEmails);
+    console.log('ID numbers:', tempIdNums);
+    console.log('Phone numbers:', tempPhoneNums);
+    console.log('Street addresses:', tempStreetAddresses);
+    console.log('Personal URLs:', tempPersonalUrls);
+    console.log('Usernames:', tempUsernames);
+  };
+
+  const signOutAndSetShowLogOut = () => {
+    setShowLogout(false);
+    signOut()
+  };
+
+  const createNewDocument = () => {
+    setTextTitle('');
+    setTextContent('');
+    setTextId('');
+    setPrevTextTitle('');
+    setPrevTextContent('');
+    setFullNames({});
+    setEmails({});
+    setIdNums({});
+    setPhoneNums({});
+    setStreetAddresses({});
+    setPersonalUrls({});
+    setUsernames({});
+  }
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -413,7 +412,7 @@ export default function Home() {
   };
 
   return (
-    isFullNameLoading ?
+     isAllTextsLoading || isFullNameLoading ?
       <div className="h-screen flex flex-col justify-center items-center">
         <Image className="mb-4" width="100" height="100" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} />
         <div className="text-black font-bold text-3xl">Loading...</div>
@@ -630,15 +629,19 @@ export default function Home() {
             </div>
             <Image width="20" height="20" src="/new.svg" alt="Log out" style={{ filter: 'invert(100%)' }} />
           </button>
-          <TextSelectionButton />
-          <TextSelectionButton />
-          <TextSelectionButton />
-          <TextSelectionButton />
-          <TextSelectionButton />
-          <TextSelectionButton />
-          <TextSelectionButton />
-          <TextSelectionButton />
-          <TextSelectionButton />
+          {[...allTexts.texts].reverse().map((text: TextResponse) => (
+            <TextSelectionButton
+              key={text.textId}
+              focused={text.textId === textId}
+              textTitle={text.textTitle}
+              textContent={text.textContent}
+              onClick={() => {
+                setTextTitle(text.textTitle);
+                setTextContent(text.textContent);
+                setTextId(text.textId);
+              }}
+            />
+          ))}
           {showLogout && (
             <div className="absolute flex bg-white bottom-20 p-3 rounded-xl shadow-xl items-center z-10" style={{ width: '240px', height: '60px' }}>
               <button

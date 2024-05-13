@@ -88,25 +88,6 @@ func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient) error {
 	})
 }
 
-func GetText(c *fiber.Ctx, client *db.PrismaClient) error {
-	// Get the user ID from the URL parameter
-	textID := c.Params("textId")
-
-	userID, textTitle, textContent, lastEditedOn, getErr := queries.GetText(c, client, textID)
-	if getErr != nil {
-		fmt.Println("Error getting text:", getErr)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to get text"})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"textId": textID,
-		"userId": userID,
-		"textTitle": textTitle,
-		"textContent": textContent,
-		"lastEditedOn": lastEditedOn,
-	})
-}
-
 func EditTitle(c *fiber.Ctx, client *db.PrismaClient) error {
 	var requestBody types.EditTitleRequest
 	

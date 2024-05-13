@@ -69,18 +69,6 @@ func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient, userID string) ([]*db.Te
 	return utils.ConvertToPointer(texts), nil
 }
 
-func GetText(c *fiber.Ctx, client *db.PrismaClient, textID string) (string, string, string, time.Time, error) {
-	text, err := client.Text.FindUnique(
-		db.Text.TextID.Equals(textID),
-	).Exec(c.Context())
-
-	if err != nil {
-		return "", "", "", time.Time{}, err
-	}
-
-	return text.UserID, text.TextTitle, text.TextContent, text.LastEditedOn, nil
-}
-
 func EditTitle(c *fiber.Ctx, client *db.PrismaClient, textRequest types.EditTitleRequest) (*db.TextModel, error) {
 	editedText, err := client.Text.FindUnique(
 		db.Text.TextID.Equals(textRequest.TextID),

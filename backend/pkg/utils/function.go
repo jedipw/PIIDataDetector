@@ -5,9 +5,9 @@ import (
 )
 
 func ConvertToPointer(texts []db.TextModel) []*db.TextModel {
-	pointerTexts := make([]*db.TextModel, len(texts))
-	for i, text := range texts {
-		pointerTexts[i] = &text
-	}
-	return pointerTexts
+    pointerTexts := make([]*db.TextModel, len(texts))
+    for i := range texts {
+        pointerTexts[i] = &texts[i]
+    }
+    return pointerTexts
 }
