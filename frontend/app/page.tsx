@@ -401,13 +401,6 @@ export default function Home() {
     setTextId('');
     setPrevTextTitle('');
     setPrevTextContent('');
-    setFullNames({});
-    setEmails({});
-    setIdNums({});
-    setPhoneNums({});
-    setStreetAddresses({});
-    setPersonalUrls({});
-    setUsernames({});
   }
 
   const getInitials = (name: string) => {
