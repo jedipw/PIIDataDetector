@@ -214,7 +214,7 @@ export default function Home() {
 
     typingTimeoutRef.current = setTimeout(() => {
       if (textContent.trim() || textTitle.trim()) {
-        if(isBeingSelected) {
+        if (isBeingSelected) {
           setIsBeingSelected(false);
         } else {
           if (!textId) {
@@ -527,7 +527,9 @@ export default function Home() {
           <div className={`absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto ${isFindingPII && 'flex '}} items-center`} style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)', userSelect: 'none' }}>
             {isFindingPII ?
               <div className="flex flex-col w-full items-center">
-                <Image className="mr-2 mb-2" width="100" height="100" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
+                <div className='w-32 h-32 rounded-full flex items-center justify-center bg-[#FAD06D] mb-5'>
+                  <Image className="mr-2 mb-2" width="100" height="100" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
+                </div>
                 <div className=" text-black text-xl font-bold w-full text-center">Finding PII...</div>
               </div>
               : <>
@@ -718,7 +720,7 @@ export default function Home() {
                   onDeleteClick={() => {
                     handleDelete(text.textId);
                   }}
-                /> 
+                />
               </div>
 
             ))}
