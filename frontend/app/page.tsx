@@ -475,7 +475,9 @@ export default function Home() {
   return (
     isAllTextsLoading || isFullNameLoading ?
       <div className=" h-screen flex flex-col justify-center items-center ">
-        <Image className="mb-4" width="100" height="100" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} />
+        <div className='w-32 h-32 rounded-full flex items-center justify-center bg-[#FAD06D] mb-5'>
+          <Image width="100" height="100" src="/write.svg" alt="Write" style={{ filter: 'invert(100%)' }} />
+        </div>
         <div className="text-black font-bold text-3xl">Loading...</div>
       </div> : <>
         <div className=" h-screen flex flex-col justify-center items-center lg:hidden">
@@ -707,6 +709,8 @@ export default function Home() {
                   textContent={text.textContent}
                   onClick={() => {
                     setIsBeingSelected(true);
+                    setPrevTextContent(text.textContent);
+                    setPrevTextTitle(text.textTitle);
                     setTextTitle(text.textTitle);
                     setTextContent(text.textContent);
                     setTextId(text.textId);
