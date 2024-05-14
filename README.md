@@ -54,7 +54,7 @@ The Personally Identifiable Information (PII) Data Detector is an individual mac
 
 **Note 1:** You may be required to install additional packages/libraries.<br>
 **Note 2:** You must run all three servers in order for the web application to be fully functional.<br>
-**Note 3:** It is mandatory to set up the PostgreSQL database first before running.<br>
+**Note 3:** It is mandatory to set up the PostgreSQL database and Firebase Authentication before running.<br>
 
 ## More Information
 For more information, please refer to the "Wiki" section at https://github.com/jedipw/PIIDataDetector/wiki.
