@@ -7,7 +7,6 @@ import TextSelectionButton from "@/components/TextSelectionButton";
 import PIIResponse from "./types/PIIResponse";
 import AllTextsResponse from "./types/AllTextsResponse";
 import TextResponse from "./types/TextResponse";
-import DeleteButton from "@/components/DeleteButton";
 export default function Home() {
   const [fullName, setFullName] = useState('');
   const [userId, setUserId] = useState('');
@@ -481,7 +480,7 @@ export default function Home() {
       </div> : <>
         <div className=" h-screen flex flex-col justify-center items-center lg:hidden">
           <div className="text-black font-bold text-3xl text-center">Sorry, your device is too small to use this app.</div>
-          <button className="text-black bg-[#FAD06D] p-3 m-3 font-bold rounded shadow-md" onClick={() => signOut()} >Sign out</button>
+          <button className="text-white bg-[#FBBA21] p-3 mt-5 font-bold rounded shadow-sm hover:bg-[#E8A300] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E8A300]" onClick={() => signOut()} >Sign out</button>
         </div>
         <div className="sm:hidden lg:block h-screen relative">
           <div className="absolute h-full overflow-auto left-80" style={{ width: `calc(100vw - 680px)` }}>
@@ -523,7 +522,7 @@ export default function Home() {
               <p className="text-xl">Find PII</p>
             </button>
           </div>
-          <div className={`absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto ${isFindingPII && 'flex '}} items-center`} style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)' }}>
+          <div className={`absolute shadow-2xl right-0 h-full p-5 bg-white overflow-auto ${isFindingPII && 'flex '}} items-center`} style={{ width: '350px', boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0, 0.1)', userSelect: 'none' }}>
             {isFindingPII ?
               <div className="flex flex-col w-full items-center">
                 <Image className="mr-2 mb-2" width="100" height="100" src="/search.svg" alt="Search" style={{ filter: 'invert(100%)' }} />
@@ -712,13 +711,10 @@ export default function Home() {
                     setTextContent(text.textContent);
                     setTextId(text.textId);
                   }}
-                />
-                <DeleteButton
-                  onClick={() => {
+                  onDeleteClick={() => {
                     handleDelete(text.textId);
                   }}
-                  disabled={isBeingDeleted || isAPIBeingCalled || isFindingPII}
-                />
+                /> 
               </div>
 
             ))}
