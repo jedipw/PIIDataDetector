@@ -31,7 +31,7 @@ The Personally Identifiable Information (PII) Data Detector is an individual mac
 - <b>CI/CD:</b> GitHub Action
 
 ## Screenshot
-![PIIDataDetector_Screenshot](https://github.com/jedipw/PIIDataDetector/assets/82791342/6a3967da-204b-465d-8b0c-7465f695212f)
+![PIIDataDetector_Screenshot](https://github.com/jedipw/PIIDataDetector/assets/82791342/d2491f75-ba96-4522-8520-a1900be08b26)
 
 ## First Time Setup
 ### PII Data Detector
