@@ -501,7 +501,6 @@ export default function Home() {
             />
             <textarea
               id="textArea"
-              disabled={isFindingPII}
               className="w-full pr-20 mt-10 pb-10 text-black text-xl resize-none font-extralight"
               value={textContent}
               onChange={(event) => {
@@ -511,7 +510,6 @@ export default function Home() {
                 lineHeight: 'normal',
                 outline: 'none',
                 height: 'calc(100vh - 150px)',
-                cursor: isFindingPII ? 'not-allowed' : 'text',
               }}
               placeholder="Type or paste your text here..."
             />
