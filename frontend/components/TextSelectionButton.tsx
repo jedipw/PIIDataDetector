@@ -37,7 +37,7 @@ export default function TextSelectionButton({ focused, textTitle, textContent, o
                 onMouseEnter={() => setIsDeletedHovered(true)}
                 onMouseLeave={() => setIsDeletedHovered(false)}
                 aria-label="Delete"
-
+                disabled={disabled}
             >
                 <Image width="20" height="20" src="/delete.svg" alt="Log out" style={{ filter: 'invert(0%)' }} />
             </button>}

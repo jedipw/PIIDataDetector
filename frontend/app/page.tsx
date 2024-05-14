@@ -698,7 +698,7 @@ export default function Home() {
               </div>
               <Image width="20" height="20" src="/new.svg" alt="Log out" style={{ filter: 'invert(100%)' }} />
             </button>
-            {[...allTexts.texts].reverse().map((text: TextResponse) => (
+            {[...allTexts.texts].sort((a, b) => new Date(a.lastEditedOn).getTime() - new Date(b.lastEditedOn).getTime()).reverse().map((text: TextResponse) => (
               <div className="flex" key={text.textId}>
                 <TextSelectionButton
                   disabled={isAPIBeingCalled || isBeingDeleted || isFindingPII}

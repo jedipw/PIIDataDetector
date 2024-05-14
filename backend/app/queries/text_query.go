@@ -16,6 +16,7 @@ func CreateTextWithTitle(c *fiber.Ctx, client *db.PrismaClient, textRequest type
 		),
 		db.Text.TextTitle.Set(textRequest.TextTitle),
 		db.Text.TextContent.Set(""),
+		db.Text.LastEditedOn.Set(time.Now()),
 	).Exec(c.Context())
 
 	if err != nil {
@@ -32,6 +33,7 @@ func CreateTextWithContent(c *fiber.Ctx, client *db.PrismaClient, textRequest ty
 		),
 		db.Text.TextTitle.Set(""),
 		db.Text.TextContent.Set(textRequest.TextContent),
+		db.Text.LastEditedOn.Set(time.Now()),
 	).Exec(c.Context())
 
 	if err != nil {
@@ -48,6 +50,7 @@ func CreateTextWithTitleAndContent(c *fiber.Ctx, client *db.PrismaClient, textRe
 		),
 		db.Text.TextTitle.Set(textRequest.TextTitle),
 		db.Text.TextContent.Set(textRequest.TextContent),
+		db.Text.LastEditedOn.Set(time.Now()),
 	).Exec(c.Context())
 
 	if err != nil {
@@ -60,7 +63,11 @@ func CreateTextWithTitleAndContent(c *fiber.Ctx, client *db.PrismaClient, textRe
 func GetAllTexts(c *fiber.Ctx, client *db.PrismaClient, userID string) ([]*db.TextModel, error) {
 	texts, err := client.Text.FindMany(
 		db.Text.UserID.Equals(userID),
-	).Exec(c.Context())
+	).
+	OrderBy(
+        db.Text.LastEditedOn.Order(db.DESC),
+    ).
+	Exec(c.Context())
 
 	if err != nil {
 		return nil, err
